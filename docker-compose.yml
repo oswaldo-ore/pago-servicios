@@ -1,0 +1,33 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    networks:
+      - net-pago-servicio
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=oswaldo
+      - DB_NAME=pago-servicio
+
+  db:
+    image: mariadb:10.4.25
+    restart: always
+    ports:
+      - 3306:3306
+    networks:
+      - net-pago-servicio
+    environment:
+      - MYSQL_ROOT_PASSWORD=oswaldo
+      - MYSQL_DATABASE=pago-servicio
+
+networks:
+  net-pago-servicio:
+    driver: bridge
