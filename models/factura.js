@@ -22,8 +22,19 @@ module.exports = (sequelize, DataTypes) => {
   Factura.init(
     {
       monto: DataTypes.DOUBLE,
-      fecha: DataTypes.DATE,
+      fecha: DataTypes.DATEONLY,
       foto_factura: DataTypes.STRING,
+      notifico: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      visto: {
+        type: DataTypes.INTEGER,
+        fieldType: 'TINYINT',
+        allowNull: false,
+        defaultValue: 0,//no visto
+      },
       servicioid: {
         type: DataTypes.INTEGER,
         allowNull: false,

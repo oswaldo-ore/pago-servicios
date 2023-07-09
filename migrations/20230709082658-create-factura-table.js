@@ -14,8 +14,19 @@ module.exports = {
         allowNull: false,
       },
       fecha: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: false,
+      },
+      notifico: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      visto: {
+        type: Sequelize.INTEGER,
+        fieldType: 'TINYINT',
+        allowNull: false,
+        defaultValue: 0,//no visto
       },
       foto_factura: {
         type: Sequelize.STRING,
