@@ -1,7 +1,11 @@
 var express = require('express');
-const { UsuarioController,ServicioController,SuscripcionController } = require('../controllers');
+const { UsuarioController,ServicioController,SuscripcionController,FacturaController } = require('../controllers');
 
 const router = express.Router();
+const multer  = require('multer');
+const upload = multer({
+    storage: multer.memoryStorage(),
+});
 
 router.get('/usuarios/listar', UsuarioController.listarUsuarios);
 router.post('/usuarios/crear', UsuarioController.crearUsuario);
@@ -22,4 +26,6 @@ router.put('/suscripciones/:id', SuscripcionController.actualizarSuscripcion);
 router.delete('/suscripciones/:id', SuscripcionController.eliminarSuscripcion);
 router.put('/suscripciones/:id/activar', SuscripcionController.activarSuscripcion);
 router.put('/suscripciones/:id/desactivar', SuscripcionController.desactivarSuscripcion);
+
+router.post('/facturas/crear', upload.single("foto"),  FacturaController.crearFactura);
 module.exports = router;
