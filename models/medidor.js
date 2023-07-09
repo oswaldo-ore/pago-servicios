@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
       Medidor.belongsTo(models.Servicio, { foreignKey: 'servicioId' });
       Medidor.belongsTo(models.Usuario, { foreignKey: 'usuarioId' });
     }
+    toJSON() {
+      // Oculta las columnas createdAt, updatedAt y deletedAt
+      return { ...this.get(), createdAt: undefined, updatedAt: undefined, deletedAt: undefined };
+    }
   }
 
   Medidor.init(
@@ -26,8 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
-      deletedAt: DataTypes.DATE,
-      allowNull: true
+      deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true
+      }
     },
     {
       sequelize,

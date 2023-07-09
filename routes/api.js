@@ -1,5 +1,5 @@
 var express = require('express');
-const { UsuarioController,ServicioController } = require('../controllers');
+const { UsuarioController,ServicioController,SuscripcionController } = require('../controllers');
 
 const router = express.Router();
 
@@ -16,4 +16,10 @@ router.put('/servicios/:id', ServicioController.actualizarServicio);
 router.delete('/servicios/:id', ServicioController.eliminarServicio);
 router.put('/servicios/:id/activar', ServicioController.activarServicio);
 router.put('/servicios/:id/desactivar', ServicioController.desactivarServicio);
+
+router.post('/suscripciones/crear', SuscripcionController.crearSuscripcion);
+router.put('/suscripciones/:id', SuscripcionController.actualizarSuscripcion);
+router.delete('/suscripciones/:id', SuscripcionController.eliminarSuscripcion);
+router.put('/suscripciones/:id/activar', SuscripcionController.activarSuscripcion);
+router.put('/suscripciones/:id/desactivar', SuscripcionController.desactivarSuscripcion);
 module.exports = router;

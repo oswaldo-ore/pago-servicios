@@ -7,7 +7,7 @@ const UsuarioController = {
   async listarUsuarios(req, res) {
     try {
         const { page = 1, limit = 8 } = req.query;
-        const usuarios = await usuarioRepository.listarUsuarios(page, limit);
+        const usuarios = await usuarioRepository.listarUsuarioConSuscripciones(page, limit);
         return res.json(ResponseHelper.success(usuarios,ResponseHelper.listar('usuarios')));
     } catch (error) {
       console.error('Error al listar los usuarios:', error);

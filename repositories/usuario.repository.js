@@ -1,4 +1,4 @@
-const { Usuario } = require('../models');
+const { Usuario, Suscripcion, Servicio  } = require('../models');
 
 class UsuarioRepository {
   async listarUsuarios(page, limit) {
@@ -13,6 +13,22 @@ class UsuarioRepository {
       currentPage: +page,
       data: rows,
     };
+  }
+
+  async listarUsuarioConSuscripciones(page, limit) {
+    const offset = (page - 1) * limit;
+
+    const usuarios = await Usuario.findAll({
+      include: [
+        {
+          model: Servicio,
+        },
+      ],
+      offset,
+      limit,
+    });
+
+    return usuarios;
   }
 
   async crearUsuario(nombre, apellidos) {

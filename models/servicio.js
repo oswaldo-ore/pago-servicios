@@ -8,6 +8,11 @@ module.exports = (sequelize, DataTypes) => {
 
     static associate(models) {
       Servicio.hasMany(models.Medidor, { foreignKey: 'usuarioId' });
+      Servicio.belongsToMany(models.Usuario, {
+        through: models.Suscripcion,
+        foreignKey: 'servicioid',
+        otherKey: 'usuarioid',
+      });
     }
     toJSON() {
       // Oculta las columnas createdAt, updatedAt y deletedAt

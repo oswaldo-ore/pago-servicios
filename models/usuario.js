@@ -12,6 +12,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Usuario.hasMany(models.Medidor, { foreignKey: 'usuarioId' });
+      Usuario.hasMany(models.Suscripcion, { foreignKey: 'usuarioid' });
+      Usuario.belongsToMany(models.Servicio, {
+        through: models.Suscripcion,
+        foreignKey: 'usuarioid',
+        otherKey: 'servicioid',
+      });
     }
 
     toJSON() {
