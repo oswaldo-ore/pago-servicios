@@ -11,12 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Usuario.hasMany(models.Medidor, { foreignKey: 'usuarioId' });
-      Usuario.hasMany(models.Suscripcion, { foreignKey: 'usuarioid' });
+      Usuario.hasMany(models.Medidor, { as: "Medidores", foreignKey: 'usuarioId' });
+      Usuario.hasMany(models.Suscripcion, { as: 'Suscripciones', foreignKey: 'usuarioid' });
+      Usuario.hasMany(models.DetalleUsuarioFactura, { as: 'DetalleUsuarioFactura', foreignKey: 'usuarioid' });
       Usuario.belongsToMany(models.Servicio, {
         through: models.Suscripcion,
         foreignKey: 'usuarioid',
         otherKey: 'servicioid',
+        as: 'Servicios'
       });
     }
 
@@ -39,8 +41,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     },
-    deletedAt:{
-      type:DataTypes.DATE,
+    deletedAt: {
+      type: DataTypes.DATE,
       allowNull: true
     }
   }, {

@@ -1,5 +1,11 @@
 var express = require('express');
-const { UsuarioController,ServicioController,SuscripcionController,FacturaController } = require('../controllers');
+const { 
+    UsuarioController,
+    ServicioController,
+    SuscripcionController,
+    FacturaController,
+    MedidorController
+} = require('../controllers');
 
 const router = express.Router();
 const multer  = require('multer');
@@ -13,6 +19,7 @@ router.put('/usuarios/:id', UsuarioController.actualizarUsuario);
 router.delete('/usuarios/:id', UsuarioController.eliminarUsuario);
 router.put('/usuarios/:id/activar', UsuarioController.activarUsuario);
 router.put('/usuarios/:id/desactivar', UsuarioController.desactivarUsuario);
+router.get('/usuarios/suscripciones', UsuarioController.usuariosConSuscripciones);
 
 router.get('/servicios/listar', ServicioController.listarServicios);
 router.post('/servicios/crear', ServicioController.crearServicio);
@@ -21,6 +28,9 @@ router.delete('/servicios/:id', ServicioController.eliminarServicio);
 router.put('/servicios/:id/activar', ServicioController.activarServicio);
 router.put('/servicios/:id/desactivar', ServicioController.desactivarServicio);
 
+router.post('/medidores/crear', MedidorController.crearMedidor);
+
+
 router.post('/suscripciones/crear', SuscripcionController.crearSuscripcion);
 router.put('/suscripciones/:id', SuscripcionController.actualizarSuscripcion);
 router.delete('/suscripciones/:id', SuscripcionController.eliminarSuscripcion);
@@ -28,4 +38,5 @@ router.put('/suscripciones/:id/activar', SuscripcionController.activarSuscripcio
 router.put('/suscripciones/:id/desactivar', SuscripcionController.desactivarSuscripcion);
 
 router.post('/facturas/crear', upload.single("foto"),  FacturaController.crearFactura);
+router.get('/facturas/listar', FacturaController.listaFacturaConDetalle);
 module.exports = router;

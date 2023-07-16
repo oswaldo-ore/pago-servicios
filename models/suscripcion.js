@@ -4,6 +4,9 @@ const { Model } = require('sequelize');
 const { Sequelize } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     class Suscripcion extends Model {
+        static FIJO="fijo";
+        static MEDIDOR="medidor";
+        static CALCULAR="calcular";
         static associate(models) {
             Suscripcion.belongsTo(models.Usuario, { foreignKey: 'usuarioid' });
             Suscripcion.belongsTo(models.Servicio, { foreignKey: 'servicioid' });
@@ -32,6 +35,22 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.BOOLEAN,
                 defaultValue: true,
             },
+            usuarioid: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+                references: {
+                  model: 'usuarios',
+                  key: 'id',
+                },
+              },
+              servicioid: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+                references: {
+                  model: 'servicios',
+                  key: 'id',
+                },
+              },
             createdAt: {
                 type: DataTypes.DATE,
                 allowNull: false,

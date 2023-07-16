@@ -2,6 +2,7 @@ const UsuarioController = require('./usuario_controller');
 const ServicioController = require('./servicio_controller');
 const SuscripcionController = require('./suscripcion_controller');
 const FacturaController = require('./factura_controller');
+const MedidorController = require('./medidor_controller');
 // Importa otros controladores según sea necesario
 
 module.exports = {
@@ -9,5 +10,6 @@ module.exports = {
   ServicioController,
   SuscripcionController,
   FacturaController,
+  MedidorController
   // Exporta otros controladores según sea necesario
 };

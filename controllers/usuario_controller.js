@@ -79,6 +79,16 @@ const UsuarioController = {
       return res.json(ResponseHelper.error('Error al desactivar el usuario' ));
     }
   },
+
+  async usuariosConSuscripciones(req,res){
+    try {
+      const usuario = await usuarioRepository.usuarioSuscripciones();
+      return res.json(ResponseHelper.success(usuario,ResponseHelper.listar("Usuarios Con suscripciones") ));
+    } catch (error) {
+      console.error('Error al desactivar el usuario:', error);
+      return res.json(ResponseHelper.error('Error al desactivar el usuario' ));
+    }
+  }
 };
 
 module.exports = UsuarioController;

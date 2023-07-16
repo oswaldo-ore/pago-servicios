@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
   class Factura extends Model {
     static associate(models) {
         Factura.belongsTo(models.Servicio, { foreignKey: 'servicioid' });  
+        Factura.hasMany(models.DetalleUsuarioFactura, { foreignKey: 'facturaid' });  
     }
 
     toJSON() {

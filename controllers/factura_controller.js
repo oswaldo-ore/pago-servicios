@@ -3,6 +3,12 @@ const ResponseHelper = require('../utils/helper_response');
 const facturaRepository = new FacturaRepository();
 
 const FacturaController = {
+
+  async listaFacturaConDetalle(req,res){
+    const facturas = await facturaRepository.listarFacturas(req.page,8);
+
+    return res.json(ResponseHelper.success(facturas, 'Factura listado correctamente'));
+  },
   async crearFactura(req, res) {
     try {
       const { monto, fecha,servicioid } = req.body;
@@ -11,8 +17,8 @@ const FacturaController = {
 
       return res.status(201).json(ResponseHelper.success(factura, ResponseHelper.created('factura')));
     } catch (error) {
-      console.error('Error al crear la factura:', error);
-      return res.json(ResponseHelper.error('Error al crear la factura'));
+      console.error('Error al crear la factura:', error.message);
+      return res.json(ResponseHelper.error(error.message));
     }
   },
 

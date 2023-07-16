@@ -1,5 +1,6 @@
-const { Usuario, Suscripcion, Servicio  } = require('../models');
-
+const { Usuario, Suscripcion, Servicio, Medidor } = require('../models');
+const { Op } = require('sequelize');
+const { sequelize } = require('../models');
 class UsuarioRepository {
   async listarUsuarios(page, limit) {
     const offset = (page - 1) * limit;
@@ -79,6 +80,147 @@ class UsuarioRepository {
     await usuario.save();
     return usuario;
   }
+
+  async usuarioSuscripciones(){
+    const usuarios = await Usuario.findAll({
+      include: [
+        {
+          model: Servicio,
+          as: 'Servicios',
+        },
+      ],
+      where:{
+        estado: true,
+      }
+    });
+
+    return usuarios;
+  }
+  async conSuscripcionDelServicio(servicioid) {
+    return await Usuario.findAll({
+      include: [
+        {
+          model: Suscripcion,
+          as: 'Suscripciones',
+          required: true,
+          where: {
+            servicioid: servicioid,
+            habilitado: true,
+          },
+        },
+      ],
+    });
+  }
+
+  async sinRegistroDelMedidorPorFecha(fecha, servicioid) {
+    const usuariosConSuscripcion = await this.conSuscripcionDelServicio(servicioid);
+    const usuariosIds = usuariosConSuscripcion.map(usuario => usuario.id);
+    const usuariosSinRegistroMedidor = await Usuario.findAll({
+      where: {
+        id: usuariosIds
+      },
+      include: [
+        {
+          model: Medidor,
+          as: 'Medidores',
+          required: false,
+          where: {
+            fecha: {
+              [Op.startsWith]: fecha,
+            }
+          }
+        },
+        {
+          model: Suscripcion,
+          as: 'Suscripciones',
+          where: {
+            servicioid: servicioid,
+            habilitado: true,
+            tiene_medidor: true,
+          },
+          required: true
+        }
+      ],
+      having: sequelize.literal('COUNT(Medidores.id) = 0') // Filtra solo los usuarios sin registros de medidor
+    });
+
+    return usuariosSinRegistroMedidor;
+  }
+
+  async medidoresConSuscripcionEnFecha(servicioid, fecha) {
+    try {
+      const medidores = await Medidor.findAll({
+        include: [
+          {
+            model: Usuario,
+            as: 'Usuario',
+            required: true,
+            include: [
+              {
+                model: Suscripcion,
+                as: 'Suscripciones',
+                where: {
+                  servicioid: servicioid,
+                  habilitado: true,
+                  tiene_medidor: true,
+                },
+                required: true
+              }
+            ]
+          }
+        ],
+        where: {
+          fecha: {
+            [Op.startsWith]: fecha,
+          }
+        }
+      });
+      return medidores;
+    } catch (error) {
+      console.error('Error al obtener los medidores del servicio:', error);
+      throw error;
+    }
+  }
+  async conSuscripcionFija(servicioid) {
+    return await Suscripcion.findAll({
+      include: [
+        {
+          model: Usuario,
+          as: 'Usuario',
+          required: true,
+          where:{
+            estado: true,
+          }
+        },
+      ],
+      where: {
+        servicioid: servicioid,
+        habilitado: true,
+        tipo: Suscripcion.FIJO
+      },
+    });
+  }
+
+  async conSuscripcionDinamico(servicioid) {
+    return await Suscripcion.findAll({
+      include: [
+        {
+          model: Usuario,
+          as: 'Usuario',
+          required: true,
+          where:{
+            estado: true,
+          }
+        },
+      ],
+      where: {
+        servicioid: servicioid,
+        habilitado: true,
+        tipo: Suscripcion.CALCULAR
+      },
+    });
+  }
+  
 }
 
 module.exports = UsuarioRepository;
