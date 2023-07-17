@@ -1,10 +1,12 @@
 var express = require('express');
+const jwtMiddleware = require('../middleware/jwt_json');
 const { 
     UsuarioController,
     ServicioController,
     SuscripcionController,
     FacturaController,
-    MedidorController
+    MedidorController,
+    LoginController
 } = require('../controllers');
 
 const router = express.Router();
@@ -12,6 +14,9 @@ const multer  = require('multer');
 const upload = multer({
     storage: multer.memoryStorage(),
 });
+router.post('/admin/login',LoginController.loginAdmin);
+
+router.use(jwtMiddleware);
 
 router.get('/usuarios/listar', UsuarioController.listarUsuarios);
 router.post('/usuarios/crear', UsuarioController.crearUsuario);
