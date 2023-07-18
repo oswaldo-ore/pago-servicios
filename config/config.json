@@ -14,9 +14,9 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
+    "username": "tecnywcy_oswaldo",
+    "password": "lunitabb3",
+    "database": "tecnywcy_pago-servicio",
     "host": "127.0.0.1",
     "dialect": "mysql"
   }
