@@ -1,4 +1,4 @@
-require('./utils/create_admin_user');
+// require('./utils/create_admin_user');
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
