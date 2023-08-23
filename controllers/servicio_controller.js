@@ -6,9 +6,20 @@ const servicioRepository = new ServicioRepository();
 const ServicioController = {
   async listarServicios(req, res) {
     try {
-      const { page = 1, limit = 8 } = req.query;
+      const { page = 1, limit = 2 } = req.query;
       const servicios = await servicioRepository.listarServicios(page, limit);
       return res.json(ResponseHelper.success(servicios, ResponseHelper.listar('servicios')));
+    } catch (error) {
+      console.error('Error al listar los servicios:', error);
+      return res.json(ResponseHelper.error(ResponseHelper.errorListar('servicios')));
+    }
+  },
+
+  async listarTodosServicios(req, res) {
+    try {
+      const { page = 1, limit = 1000 } = req.query;
+      const servicios = await servicioRepository.listarServicios(page, limit);
+      return res.json(ResponseHelper.success(servicios.data, ResponseHelper.listar('servicios')));
     } catch (error) {
       console.error('Error al listar los servicios:', error);
       return res.json(ResponseHelper.error(ResponseHelper.errorListar('servicios')));

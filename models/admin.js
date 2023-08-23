@@ -2,10 +2,12 @@
 const {
   Model
 } = require('sequelize');
+const { Sequelize } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Admin extends Model {
     static SECRET_KEY = "PAGO_SERVICIO_OSWALDO";
     static associate(models) {
+      Admin.hasMany(models.Token, { foreignKey: 'user_id' });
     }
   }
   Admin.init({
@@ -21,7 +23,6 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
     paranoid: true,
   });
-  Admin.SECRET_KEY = "PAGO_SERVICIO_OSWALDO";
 
   return Admin;
 };

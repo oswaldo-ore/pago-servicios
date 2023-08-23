@@ -1,6 +1,30 @@
-const { Suscripcion } = require('../models');
+const { Suscripcion,Servicio,Usuario } = require('../models');
 
 class SuscripcionRepository {
+  async listarPaginacion(page,limit){
+    const offset = (page - 1) * limit;
+    const { rows: suscripciones, count: total } = await Suscripcion.findAndCountAll({
+      include: [
+        {
+          model: Servicio,
+        },
+        {
+          model: Usuario,
+        },
+      ],
+      offset,
+      limit: +limit,
+    });
+    const count = await Suscripcion.count({
+      lean: true
+    });
+    return {
+      total: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: +page,
+      data: suscripciones,
+    };
+  }
   async crearSuscripcion(usuarioid, servicioid, tipo, monto, tiene_medidor) {
     const suscripcion = await Suscripcion.create({
       usuarioid,

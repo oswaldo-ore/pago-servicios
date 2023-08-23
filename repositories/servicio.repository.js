@@ -16,21 +16,25 @@ class ServicioRepository {
   }
 
   async crearServicio(nombre, asociar) {
+    console.log(asociar);
+    let asociarId = (asociar != "" ? asociar  : null);
+    console.log(asociar,asociarId);
     const servicio = await Servicio.create({
       nombre,
       estado: true,
-      asociar,
+      asociar:asociarId,
     });
     return servicio;
   }
 
   async actualizarServicio(id, nombre, asociar) {
     const servicio = await Servicio.findByPk(id);
+    let asociarId = (asociar === "" ? null : asociar);
     if (!servicio) {
       throw new Error('Servicio no encontrado');
     }
     servicio.nombre = nombre;
-    servicio.asociar = asociar;
+    servicio.asociar = asociarId;
     await servicio.save();
     return servicio;
   }

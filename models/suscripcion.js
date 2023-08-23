@@ -13,12 +13,17 @@ module.exports = (sequelize, DataTypes) => {
         }
         toJSON() {
             // Oculta las columnas createdAt, updatedAt y deletedAt
-            return { ...this.get(), createdAt: undefined, updatedAt: undefined, deletedAt: undefined };
+            return { ...this.get(), id: this.id,createdAt: undefined, updatedAt: undefined, deletedAt: undefined };
           }
     }
 
     Suscripcion.init(
         {
+            id: {
+                type: DataTypes.INTEGER,
+                primaryKey: true,
+                autoIncrement: true,
+            },
             tipo: {
                 type: DataTypes.ENUM('fijo', 'calcular', 'medidor'),
                 allowNull: false,
@@ -39,18 +44,18 @@ module.exports = (sequelize, DataTypes) => {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 references: {
-                  model: 'usuarios',
-                  key: 'id',
+                    model: 'usuarios',
+                    key: 'id',
                 },
-              },
-              servicioid: {
+            },
+            servicioid: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 references: {
-                  model: 'servicios',
-                  key: 'id',
+                    model: 'servicios',
+                    key: 'id',
                 },
-              },
+            },
             createdAt: {
                 type: DataTypes.DATE,
                 allowNull: false,

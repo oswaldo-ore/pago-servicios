@@ -34,12 +34,18 @@ class FacturaRepository {
                             required: true
                         }
                     ]
+                },
+                {
+                    model: Servicio,
                 }
             ]
         });
+        const total = await Factura.count({
+            lean: true
+          });
         return {
-            total: count,
-            totalPages: Math.ceil(count / limit),
+            total: total,
+            totalPages: Math.ceil(total / limit),
             currentPage: +page,
             data: rows,
         };
@@ -132,26 +138,18 @@ class FacturaRepository {
     async eliminarFactura(id) {
         try {
             const factura = await Factura.findByPk(id);
-
             if (!factura) {
                 throw new Error('Factura no encontrada');
             }
-
-            // Obtener la ruta del archivo de la factura
-            const rutaArchivo = path.join(__dirname, `../public${factura.foto_factura}`);
-
-            // Verificar si el archivo existe y eliminarlo
-            if (fs.existsSync(rutaArchivo)) {
-                fs.unlinkSync(rutaArchivo);
-            }
-
-            // Eliminar la factura de la base de datos
+            // const rutaArchivo = path.join(__dirname, `../public${factura.foto_factura}`);
+            // if (fs.existsSync(rutaArchivo)) {
+            //     fs.unlinkSync(rutaArchivo);
+            // }
             await factura.destroy();
-
             return { message: 'Factura eliminada correctamente' };
         } catch (error) {
             // Manejo de errores
-            throw new Error('Error al eliminar la factura');
+            throw new Error(error);
         }
     }
 }

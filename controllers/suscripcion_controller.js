@@ -4,6 +4,16 @@ const ResponseHelper = require('../utils/helper_response');
 const suscripcionRepository = new SuscripcionRepository();
 
 const SuscripcionController = {
+  async listarSuscripciones(req, res) {
+    try {
+      const { page = 1, limit = 8 } = req.query;
+      let suscripciones = await suscripcionRepository.listarPaginacion(page,limit);
+      return res.json(ResponseHelper.success(suscripciones, ResponseHelper.listar('suscripciones')));
+    } catch (error) {
+      console.error('Error al listar los suscripciones:', error);
+      return res.json(ResponseHelper.error(ResponseHelper.errorListar('suscripciones')));
+    }
+  },
   async crearSuscripcion(req, res) {
     try {
       const { usuarioid, servicioid, tipo, monto, tiene_medidor } = req.body;

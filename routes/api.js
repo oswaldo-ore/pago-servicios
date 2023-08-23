@@ -17,8 +17,9 @@ const upload = multer({
 router.post('/admin/login',LoginController.loginAdmin);
 
 router.use(jwtMiddleware);
-
+router.post('/admin/logout',LoginController.logoutAdmin);
 router.get('/usuarios/listar', UsuarioController.listarUsuarios);
+router.get('/usuarios/listar-todo', UsuarioController.listarTodosUsuarios);
 router.post('/usuarios/crear', UsuarioController.crearUsuario);
 router.put('/usuarios/:id', UsuarioController.actualizarUsuario);
 router.delete('/usuarios/:id', UsuarioController.eliminarUsuario);
@@ -27,6 +28,7 @@ router.put('/usuarios/:id/desactivar', UsuarioController.desactivarUsuario);
 router.get('/usuarios/suscripciones', UsuarioController.usuariosConSuscripciones);
 
 router.get('/servicios/listar', ServicioController.listarServicios);
+router.get('/servicios/listar-todo', ServicioController.listarTodosServicios);
 router.post('/servicios/crear', ServicioController.crearServicio);
 router.put('/servicios/:id', ServicioController.actualizarServicio);
 router.delete('/servicios/:id', ServicioController.eliminarServicio);
@@ -35,7 +37,7 @@ router.put('/servicios/:id/desactivar', ServicioController.desactivarServicio);
 
 router.post('/medidores/crear', MedidorController.crearMedidor);
 
-
+router.get('/suscripciones/listar',SuscripcionController.listarSuscripciones);
 router.post('/suscripciones/crear', SuscripcionController.crearSuscripcion);
 router.put('/suscripciones/:id', SuscripcionController.actualizarSuscripcion);
 router.delete('/suscripciones/:id', SuscripcionController.eliminarSuscripcion);
@@ -44,4 +46,5 @@ router.put('/suscripciones/:id/desactivar', SuscripcionController.desactivarSusc
 
 router.post('/facturas/crear', upload.single("foto"),  FacturaController.crearFactura);
 router.get('/facturas/listar', FacturaController.listaFacturaConDetalle);
+router.delete('/facturas/:id', FacturaController.eliminarFactura);
 module.exports = router;

@@ -10,7 +10,7 @@ class SaveImage {
         SaveImage.crearRuta(directorio);
         const rutaDestino = path.join(__dirname, `../public/images/${directorio}`, nombreArchivo);
         fs.writeFileSync(rutaDestino, buffer);
-        return "/" + directorio + nombreArchivo;
+        return "/images/" + directorio + nombreArchivo;
     }
     static eliminarCaracteresInicio(cadena) {
         return cadena.replace(/^[/\\]+/, '');

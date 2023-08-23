@@ -17,19 +17,29 @@ class UsuarioRepository {
   }
 
   async listarUsuarioConSuscripciones(page, limit) {
-    const offset = (page - 1) * limit;
-
-    const usuarios = await Usuario.findAll({
+    const offset = (page - 1) * parseInt(limit);
+    limit = parseInt(limit);
+    const { rows: usuarios, count: total } = await Usuario.findAndCountAll({
       include: [
         {
           model: Servicio,
+          as: 'Servicios',
+          lean: true, // Asegúrate de que el alias sea igual al que has definido en el modelo
         },
       ],
       offset,
-      limit,
+      limit
     });
-
-    return usuarios;
+    const count = await Usuario.count({
+      lean: true
+    });
+    console.log("total: " + count);
+    return {
+      total: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: +page,
+      data: usuarios,
+    };
   }
 
   async crearUsuario(nombre, apellidos) {
@@ -81,7 +91,7 @@ class UsuarioRepository {
     return usuario;
   }
 
-  async usuarioSuscripciones(){
+  async usuarioSuscripciones() {
     const usuarios = await Usuario.findAll({
       include: [
         {
@@ -89,7 +99,7 @@ class UsuarioRepository {
           as: 'Servicios',
         },
       ],
-      where:{
+      where: {
         estado: true,
       }
     });
@@ -106,6 +116,7 @@ class UsuarioRepository {
           where: {
             servicioid: servicioid,
             habilitado: true,
+            tiene_medidor: true,
           },
         },
       ],
@@ -114,6 +125,9 @@ class UsuarioRepository {
 
   async sinRegistroDelMedidorPorFecha(fecha, servicioid) {
     const usuariosConSuscripcion = await this.conSuscripcionDelServicio(servicioid);
+    if (usuariosConSuscripcion.length == 0) {
+      return [];
+    }
     const usuariosIds = usuariosConSuscripcion.map(usuario => usuario.id);
     const usuariosSinRegistroMedidor = await Usuario.findAll({
       where: {
@@ -188,7 +202,7 @@ class UsuarioRepository {
           model: Usuario,
           as: 'Usuario',
           required: true,
-          where:{
+          where: {
             estado: true,
           }
         },
@@ -208,7 +222,7 @@ class UsuarioRepository {
           model: Usuario,
           as: 'Usuario',
           required: true,
-          where:{
+          where: {
             estado: true,
           }
         },
@@ -220,7 +234,7 @@ class UsuarioRepository {
       },
     });
   }
-  
+
 }
 
 module.exports = UsuarioRepository;

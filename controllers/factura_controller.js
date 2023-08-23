@@ -13,6 +13,7 @@ const FacturaController = {
     try {
       const { monto, fecha,servicioid } = req.body;
       const foto  = req.file;
+      console.log(foto);
       const factura = await facturaRepository.crearFactura(monto, fecha, foto,servicioid);
 
       return res.status(201).json(ResponseHelper.success(factura, ResponseHelper.created('factura')));

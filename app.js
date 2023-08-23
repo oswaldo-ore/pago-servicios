@@ -7,7 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var apiRoutes = require('./routes/api');
 var app = express();
-
+const cors = require('cors');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -19,7 +19,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // app.use(express.json());
-
+app.use(cors({
+  origin: 'http://localhost:4200', // Permitir solicitudes desde tu aplicación Angular
+  credentials: true // Si estás manejando cookies u otras credenciales
+}));
 app.use('/', indexRouter);
 app.use('/api', apiRoutes);
 

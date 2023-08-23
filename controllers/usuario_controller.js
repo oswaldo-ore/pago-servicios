@@ -15,6 +15,17 @@ const UsuarioController = {
     }
   },
 
+  async listarTodosUsuarios(req, res) {
+    try {
+        const { page = 1, limit = 1000 } = req.query;
+        const usuarios = await usuarioRepository.listarUsuarioConSuscripciones(page, limit);
+        return res.json(ResponseHelper.success(usuarios.data,ResponseHelper.listar('usuarios')));
+    } catch (error) {
+      console.error('Error al listar los usuarios:', error);
+      return res.json(ResponseHelper.error(ResponseHelper.errorListar('usuarios')));
+    }
+  },
+
   async crearUsuario(req, res) {
     try {
       const { nombre, apellidos } = req.body;
