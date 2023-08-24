@@ -50,6 +50,27 @@ class FacturaRepository {
             data: rows,
         };
     }
+
+    async verFactura(id) {
+        const factura = await Factura.findByPk(id,{
+            include: [
+                {
+                    model: DetalleUsuarioFactura,
+                    required: false,
+                    include: [
+                        {
+                            model: Usuario,
+                            required: true
+                        }
+                    ]
+                },
+                {
+                    model: Servicio,
+                }
+            ]
+        });
+        return factura;
+    }
     async crearFactura(monto, fecha, foto, servicioid) {
         const transaction = await sequelize.transaction();
         try {

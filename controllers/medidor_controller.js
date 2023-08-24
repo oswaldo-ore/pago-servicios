@@ -15,6 +15,17 @@ const MedidorController = {
     }
   },
 
+  async listarMedidoresDeUnCliente(req, res) {
+    try {
+      const { page = 1, limit = 8,id } = req.query;
+      const medidores = await medidorRepository.listarMedidoresDeUnUsuario(page, limit,id);
+      return res.json(ResponseHelper.success(medidores, 'Medidores listados correctamente'));
+    } catch (error) {
+      console.error('Error al listar los medidores:', error);
+      return res.json(ResponseHelper.error('Error al listar los medidores'));
+    }
+  },
+
   async crearMedidor(req, res) {
     try {
       const { fecha, cantidad_medido, monto, mes, detalle, servicioId, usuarioId } = req.body;

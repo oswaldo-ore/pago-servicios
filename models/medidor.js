@@ -20,6 +20,22 @@ module.exports = (sequelize, DataTypes) => {
       monto: DataTypes.DECIMAL(10, 2),
       mes: DataTypes.STRING,
       detalle: DataTypes.STRING,
+      usuarioId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'usuarios',
+            key: 'id',
+        },
+      },
+      servicioId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'servicios',
+            key: 'id',
+        },
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,

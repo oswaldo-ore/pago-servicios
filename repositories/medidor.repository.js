@@ -1,9 +1,31 @@
-const { Medidor } = require('../models');
+const { Medidor,Suscripcion } = require('../models');
 
 class MedidorRepository {
   async listarMedidores(page, limit) {
     const offset = (page - 1) * limit;
     const { count, rows } = await Medidor.findAndCountAll({
+      offset,
+      limit: +limit,
+    });
+    return {
+      total: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: +page,
+      data: rows,
+    };
+  }
+
+  async listarMedidoresDeUnUsuario(page, limit,suscripcionId) {
+    let suscripcion = await Suscripcion.findByPk(suscripcionId);
+    const offset = (page - 1) * limit;
+    const { count, rows } = await Medidor.findAndCountAll({
+      where:{
+        usuarioId: suscripcion.usuarioid,
+        servicioId: suscripcion.servicioid,
+      },
+      order: [
+        ['fecha', 'DESC']
+      ],
       offset,
       limit: +limit,
     });

@@ -43,8 +43,10 @@ router.put('/suscripciones/:id', SuscripcionController.actualizarSuscripcion);
 router.delete('/suscripciones/:id', SuscripcionController.eliminarSuscripcion);
 router.put('/suscripciones/:id/activar', SuscripcionController.activarSuscripcion);
 router.put('/suscripciones/:id/desactivar', SuscripcionController.desactivarSuscripcion);
+router.get('/suscripciones/medidores/:id', MedidorController.listarMedidoresDeUnCliente);
 
 router.post('/facturas/crear', upload.single("foto"),  FacturaController.crearFactura);
 router.get('/facturas/listar', FacturaController.listaFacturaConDetalle);
 router.delete('/facturas/:id', FacturaController.eliminarFactura);
+router.get('/factura/:id', FacturaController.showFactura);
 module.exports = router;

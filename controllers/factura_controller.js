@@ -35,6 +35,13 @@ const FacturaController = {
       return res.json(ResponseHelper.error('Error al eliminar la factura'));
     }
   },
+
+  async showFactura(req,res){
+    const { id } = req.params;
+    const factura = await facturaRepository.verFactura(id);
+
+    return res.json(ResponseHelper.success(factura, 'Factura listado correctamente'));
+  },
 };
 
 module.exports = FacturaController;
