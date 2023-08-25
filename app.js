@@ -20,7 +20,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:4200', // Permitir solicitudes desde tu aplicación Angular
+  origin:[
+    'http://localhost:4200',
+    'https://pagoservicio.tecnosoft.website',
+    'http://pagoservicio.tecnosoft.website'
+  ] , // Permitir solicitudes desde tu aplicación Angular
   credentials: true // Si estás manejando cookies u otras credenciales
 }));
 app.use('/', indexRouter);
