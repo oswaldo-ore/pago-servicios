@@ -40,7 +40,7 @@ class FacturaRepository {
                 }
             ],
             order: [
-                ['fecha', 'DESC']
+                ['fecha', 'ASC']
               ],
         });
         const total = await Factura.count({
