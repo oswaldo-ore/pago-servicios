@@ -116,7 +116,8 @@ class FacturaRepository {
 
     async devolverPrestamoDelPago(detalleFacturaId){
         let detalle = await DetalleUsuarioFactura.findByPk(detalleFacturaId);
-        detalle.isprestado=false;
+        detalle.isprestado = false;
+        detalle.fecha_pago = new Date();
         await detalle.save();
     }
     async crearFactura(monto, fecha, foto, servicioid) {
