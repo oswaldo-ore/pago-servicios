@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       monto: DataTypes.DOUBLE,
       fecha: DataTypes.DATEONLY,
       foto_factura: DataTypes.STRING,
+      ispagado:DataTypes.BOOLEAN,
       notifico: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

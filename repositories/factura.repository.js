@@ -71,6 +71,51 @@ class FacturaRepository {
         });
         return factura;
     }
+
+    async registrarDetalleFactura(monto,detalleFacturaId,isPrestado){
+        const transaction = await sequelize.transaction();
+        console.log("hola esto es "+isPrestado);
+        try {
+            const fechaActual = new Date();
+            let detalle = await DetalleUsuarioFactura.findByPk(detalleFacturaId);
+            let cambio =0;
+            monto += detalle.monto_pago;
+            if(monto >= detalle.monto){
+                cambio= monto - detalle.monto;
+                detalle.iscancelado = true;
+            }
+            detalle.monto_pago = parseFloat(monto.toFixed(2));
+            detalle.isprestado = isPrestado;
+            detalle.cambio_pago = parseFloat(cambio.toFixed(2));
+            detalle.fecha_pago = fechaActual;
+            await detalle.save({ transaction: transaction });
+            await transaction.commit();
+            return detalle;
+        } catch (error) {
+            await transaction.rollback();
+            throw new Error(error);
+        }
+    }
+
+    async verificarSiLaFacturaPagada(facturaId){
+        let factura = await this.verFactura(facturaId);
+        let montoTotal = await DetalleUsuarioFactura.sum('monto_pago',{
+            where:{
+                facturaid:facturaId,
+            }
+        });
+
+        if(montoTotal >= factura.monto){
+            factura.ispagado = true;
+            await factura.save();
+        }
+    }
+
+    async devolverPrestamoDelPago(detalleFacturaId){
+        let detalle = await DetalleUsuarioFactura.findByPk(detalleFacturaId);
+        detalle.isprestado=false;
+        await detalle.save();
+    }
     async crearFactura(monto, fecha, foto, servicioid) {
         const transaction = await sequelize.transaction();
         try {
@@ -120,7 +165,7 @@ class FacturaRepository {
                     servicioid: servicioid,
                     usuarioid: element.usuarioId,
                     facturaid: factura.id,
-                    monto: element.monto,
+                    monto: parseFloat(element.monto.toFixed(2)),
                     fecha: fecha,
                 }, { transaction: transaction });
                 detallesFactura.push(detalle);
@@ -131,7 +176,7 @@ class FacturaRepository {
                     servicioid: servicioid,
                     usuarioid: element.usuarioid,
                     facturaid: factura.id,
-                    monto: element.monto,
+                    monto: parseFloat(element.monto.toFixed(2)),
                     fecha: fecha,
                 }, { transaction: transaction });
                 detallesFactura.push(detalle);
@@ -143,7 +188,7 @@ class FacturaRepository {
                     servicioid: servicioid,
                     usuarioid: element.usuarioid,
                     facturaid: factura.id,
-                    monto: calcular,
+                    monto: parseFloat(calcular.toFixed(2)),
                     fecha: fecha,
                 }, { transaction: transaction });
                 detallesFactura.push(detalle);

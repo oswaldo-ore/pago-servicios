@@ -49,4 +49,7 @@ router.post('/facturas/crear', upload.single("foto"),  FacturaController.crearFa
 router.get('/facturas/listar', FacturaController.listaFacturaConDetalle);
 router.delete('/facturas/:id', FacturaController.eliminarFactura);
 router.get('/factura/:id', FacturaController.showFactura);
+
+router.post("/detalle/factura/pagar",FacturaController.pagarFactura);
+router.post("/detalle/factura/devolver",FacturaController.devolverPrestamoDelPago);
 module.exports = router;

@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
             iscancelado: DataTypes.BOOLEAN,
             fecha_pago: DataTypes.DATE,
             notificar: DataTypes.BOOLEAN,
+            isprestado:DataTypes.BOOLEAN,
             visto: DataTypes.TINYINT,
             monto_pago: DataTypes.DOUBLE,
             cambio_pago: DataTypes.DOUBLE,
