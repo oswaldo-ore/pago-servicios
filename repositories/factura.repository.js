@@ -169,7 +169,7 @@ class FacturaRepository {
                     servicioid: servicioid,
                     usuarioid: element.usuarioId,
                     facturaid: factura.id,
-                    monto: parseFloat(element.monto.toFixed(2)),
+                    monto: parseFloat(element.monto),
                     fecha: fecha,
                 }, { transaction: transaction });
                 detallesFactura.push(detalle);
@@ -180,7 +180,7 @@ class FacturaRepository {
                     servicioid: servicioid,
                     usuarioid: element.usuarioid,
                     facturaid: factura.id,
-                    monto: parseFloat(element.monto.toFixed(2)),
+                    monto: parseFloat(element.monto),
                     fecha: fecha,
                 }, { transaction: transaction });
                 detallesFactura.push(detalle);
