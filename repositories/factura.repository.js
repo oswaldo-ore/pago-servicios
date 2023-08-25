@@ -38,7 +38,10 @@ class FacturaRepository {
                 {
                     model: Servicio,
                 }
-            ]
+            ],
+            order: [
+                ['fecha', 'DESC']
+              ],
         });
         const total = await Factura.count({
             lean: true
