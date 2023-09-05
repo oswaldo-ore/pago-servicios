@@ -13,7 +13,6 @@ const FacturaController = {
     try {
       const { monto, fecha, servicioid } = req.body;
       const foto = req.file;
-      console.log(foto);
       const factura = await facturaRepository.crearFactura(monto, fecha, foto, servicioid);
 
       return res.status(201).json(ResponseHelper.success(factura, ResponseHelper.created('factura')));
@@ -42,10 +41,16 @@ const FacturaController = {
     return res.json(ResponseHelper.success(factura, 'Factura listado correctamente'));
   },
 
+  async cambiarEstadoPrestado(req, res) {
+    const { id } = req.params;
+    const factura = await facturaRepository.cambiarEstadoFacturaACanceladoPrestamo(id);
+    return res.json(ResponseHelper.success(factura, 'Factura listado correctamente'));
+  },
+
   async pagarFactura(req, res) {
     try {
       const { monto, detalle_factura_id, isprestado } = req.body;
-      const detalle = await facturaRepository.registrarDetalleFactura(parseFloat(monto), parseFloat(detalle_factura_id),isprestado);
+      const detalle = await facturaRepository.registrarDetalleFactura(parseFloat(monto), detalle_factura_id,isprestado);
       await facturaRepository.verificarSiLaFacturaPagada(detalle.facturaid);
       return res.json(ResponseHelper.success(detalle, "El pago fue registrado correctamente."));
     } catch (error) {

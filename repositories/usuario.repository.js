@@ -24,9 +24,45 @@ class UsuarioRepository {
         {
           model: Servicio,
           as: 'Servicios',
-          lean: true, // Asegúrate de que el alias sea igual al que has definido en el modelo
+          attributes: [
+            'id',
+            'nombre',
+            'asociar',
+            'estado',
+            [
+              sequelize.literal(`
+                (SELECT 
+                  ROUND(
+                    SUM(IF(duf.estado = 0, duf.monto , 0)) +
+                    SUM(IF(duf.estado = 1, duf.monto , 0)), 2
+                  )
+                FROM detalles_usuario_factura duf 
+                WHERE duf.usuarioid = Usuario.id 
+                AND duf.servicioid = Servicios.id 
+                AND duf.deletedAt IS NULL)
+              `),
+              'monto_por_servicio'
+            ]
+          ]
         },
       ],
+      attributes: {
+        include: [
+          [
+            sequelize.literal(`
+              (SELECT 
+                ROUND(
+                  SUM(IF(duf.estado = 0, duf.monto , 0)) +
+                  SUM(IF(duf.estado = 1, duf.monto , 0)) , 2
+                )
+              FROM detalles_usuario_factura duf 
+              WHERE duf.usuarioid = Usuario.id 
+              AND duf.deletedAt IS NULL)
+            `),
+            'suma_montos'
+          ]
+        ]
+      },
       offset,
       limit
     });

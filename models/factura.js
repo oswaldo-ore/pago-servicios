@@ -5,6 +5,9 @@ const { Sequelize } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Factura extends Model {
+    static PENDIENTE = 0;
+    static PRESTADO = 1;
+    static CANCELADO = 2;
     static associate(models) {
         Factura.belongsTo(models.Servicio, { foreignKey: 'servicioid' });  
         Factura.hasMany(models.DetalleUsuarioFactura, { foreignKey: 'facturaid' });  
@@ -26,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       fecha: DataTypes.DATEONLY,
       foto_factura: DataTypes.STRING,
       ispagado:DataTypes.BOOLEAN,
+      estado:DataTypes.INTEGER,
       notifico: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

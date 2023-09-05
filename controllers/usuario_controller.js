@@ -1,7 +1,9 @@
 const UsuarioRepository = require('../repositories/usuario.repository');
+const DetalleUsuarioFacturaRepository = require('../repositories/detalle.factura.repository');
 const ResponseHelper = require('../utils/helper_response');
 
 const usuarioRepository = new UsuarioRepository();
+const detalleFactura = new DetalleUsuarioFacturaRepository();
 
 const UsuarioController = {
   async listarUsuarios(req, res) {
@@ -98,6 +100,22 @@ const UsuarioController = {
     } catch (error) {
       console.error('Error al desactivar el usuario:', error);
       return res.json(ResponseHelper.error('Error al desactivar el usuario' ));
+    }
+  },
+
+  async detallePagoDeUsuario(req,res){
+    try {
+      const {id}  = req.params;
+      const deuda = await detalleFactura.deudasNoCanceladasDeUnUsuario(id);
+      const canceladas = await detalleFactura.detallesDeUsuarioFacturaPagados(id);
+      let data = {
+        "deuda": deuda,
+        "pagadas": canceladas
+      }
+      return res.json(ResponseHelper.success(data,ResponseHelper.listar("Usuarios Con suscripciones") ));
+    } catch (error) {
+      console.error('Error al listar el deudas:', error);
+      return res.json(ResponseHelper.error('Error al listar las deudas' ));
     }
   }
 };

@@ -26,6 +26,7 @@ router.delete('/usuarios/:id', UsuarioController.eliminarUsuario);
 router.put('/usuarios/:id/activar', UsuarioController.activarUsuario);
 router.put('/usuarios/:id/desactivar', UsuarioController.desactivarUsuario);
 router.get('/usuarios/suscripciones', UsuarioController.usuariosConSuscripciones);
+router.get('/usuarios/:id/deudas', UsuarioController.detallePagoDeUsuario);
 
 router.get('/servicios/listar', ServicioController.listarServicios);
 router.get('/servicios/listar-todo', ServicioController.listarTodosServicios);
@@ -49,6 +50,7 @@ router.post('/facturas/crear', upload.single("foto"),  FacturaController.crearFa
 router.get('/facturas/listar', FacturaController.listaFacturaConDetalle);
 router.delete('/facturas/:id', FacturaController.eliminarFactura);
 router.get('/factura/:id', FacturaController.showFactura);
+router.put('/factura/:id/estado-prestado', FacturaController.cambiarEstadoPrestado);
 
 router.post("/detalle/factura/pagar",FacturaController.pagarFactura);
 router.post("/detalle/factura/devolver",FacturaController.devolverPrestamoDelPago);
