@@ -30,11 +30,13 @@ const UsuarioController = {
 
   async crearUsuario(req, res) {
     try {
-      const { nombre, apellidos } = req.body;
+      const { nombre, apellidos,cod_pais="",telefono="" } = req.body;
 
       const usuario = await usuarioRepository.crearUsuario(
         nombre,
-        apellidos
+        apellidos,
+        cod_pais,
+        telefono
       );
       return res.status(201).json(ResponseHelper.success(usuario,ResponseHelper.created('usuario')));
     } catch (error) {
@@ -46,12 +48,14 @@ const UsuarioController = {
   async actualizarUsuario(req, res) {
     try {
       const { id } = req.params;
-      const { nombre, apellidos } = req.body;
+      const { nombre, apellidos,cod_pais="",telefono="" } = req.body;
 
       const usuario = await usuarioRepository.actualizarUsuario(
         id,
         nombre,
         apellidos,
+        cod_pais,
+        telefono
       );
       return res.json(ResponseHelper.success(usuario,ResponseHelper.updated('usuario')));
     } catch (error) {

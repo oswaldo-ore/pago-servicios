@@ -78,22 +78,26 @@ class UsuarioRepository {
     };
   }
 
-  async crearUsuario(nombre, apellidos) {
+  async crearUsuario(nombre, apellidos,cod_pais,telefono) {
     const usuario = await Usuario.create({
       nombre,
       apellidos,
+      cod_pais,
+      telefono,
       estado: true,
     });
     return usuario;
   }
 
-  async actualizarUsuario(id, nombre, apellidos) {
+  async actualizarUsuario(id, nombre, apellidos,cod_pais,telefono) {
     const usuario = await Usuario.findByPk(id);
     if (!usuario) {
       throw new Error('Usuario no encontrado');
     }
     usuario.nombre = nombre;
     usuario.apellidos = apellidos;
+    usuario.cod_pais = cod_pais;
+    usuario.telefono = telefono;
     await usuario.save();
     return usuario;
   }
