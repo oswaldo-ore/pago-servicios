@@ -5,7 +5,8 @@ const facturaRepository = new FacturaRepository();
 const FacturaController = {
 
   async listaFacturaConDetalle(req, res) {
-    const facturas = await facturaRepository.listarFacturas(req.page, 8);
+    const { page = 1, limit = 8 } = req.query;
+    const facturas = await facturaRepository.listarFacturas(page,limit);
 
     return res.json(ResponseHelper.success(facturas, 'Factura listado correctamente'));
   },
