@@ -7,7 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var apiRoutes = require('./routes/api');
 var app = express();
-const cors = require('cors');
+const cors = require('cors'); 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
