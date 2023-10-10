@@ -33,8 +33,8 @@ class UsuarioRepository {
               sequelize.literal(`
                 (SELECT 
                   IFNULL( ROUND(
-                    SUM(IF(duf.estado = 0, duf.monto , 0)) +
-                    SUM(IF(duf.estado = 1, duf.monto , 0)), 2
+                    SUM(IF(duf.estado = 0 or duf.estado = 1, duf.monto , 0)) -
+                    SUM(IF(duf.estado = 0 or duf.estado = 1, duf.monto_pago , 0)), 2
                   ),0)
                 FROM detalles_usuario_factura duf 
                 WHERE duf.usuarioid = Usuario.id 
@@ -52,8 +52,8 @@ class UsuarioRepository {
             sequelize.literal(`
               (SELECT 
                 IFNULL( ROUND(
-                  SUM(IF(duf.estado = 0, duf.monto , 0)) +
-                  SUM(IF(duf.estado = 1, duf.monto , 0)), 2
+                  SUM(IF(duf.estado = 0 or duf.estado = 1, duf.monto , 0)) -
+                  SUM(IF(duf.estado = 0 or duf.estado = 1, duf.monto_pago , 0)), 2
                 ),0)
               FROM detalles_usuario_factura duf 
               WHERE duf.usuarioid = Usuario.id 

@@ -121,7 +121,20 @@ const UsuarioController = {
       console.error('Error al listar el deudas:', error);
       return res.json(ResponseHelper.error('Error al listar las deudas' ));
     }
+  },
+  async pagarDeudaDelUsuario(req,res){
+    try {
+      const {id}  = req.params;
+      const {monto} = req.body;
+      console.log(id,monto);
+      let movimiento = await detalleFactura.pagarDeudasNoCanceladasDeUnUsuario(id,monto);
+      return res.json(ResponseHelper.success(movimiento,ResponseHelper.listar("Deudas pagadas correctamente") ));
+    } catch (error) {
+      console.error('Error al listar el deudas:', error);
+      return res.json(ResponseHelper.error('Error al pagar las deudas' ));
+    }
   }
 };
+
 
 module.exports = UsuarioController;
