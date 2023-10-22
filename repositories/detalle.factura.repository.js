@@ -8,8 +8,12 @@ const {
     sequelize
 } = require('../models');
 const { Op } = require('sequelize');
+nombresMeses = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+];
 class DetalleUsuarioFacturaRepository {
-   
+    
     async deudasNoCanceladasDeUnUsuario(usuarioId) {
         const detallesPrestadosNoCancelados = await DetalleUsuarioFactura.findAll({
             include: [
@@ -31,50 +35,60 @@ class DetalleUsuarioFacturaRepository {
                 estado: {
                     [Op.or]: [DetalleUsuarioFactura.PENDIENTE, DetalleUsuarioFactura.PRESTADO ] 
                 }
-            }
+            },
+            order: [
+                ["fecha","ASC"],
+                ["monto","DESC"]
+            ]
         });
         return detallesPrestadosNoCancelados;
     }
 
-    async pagarDeudasNoCanceladasDeUnUsuario(usuarioId,monto) {
+    async pagarDeudasNoCanceladasDeUnUsuario(usuarioId,monto,detalle) {
         const transaction = await sequelize.transaction();
         try {
             let deudas = await this.deudasNoCanceladasDeUnUsuario(usuarioId);
+            let usuario = await Usuario.findByPk(usuarioId); 
             let movimiento = await Movimiento.create({
                 monto: monto,
                 fecha: new Date(),
                 usuarioid: usuarioId,
-                descripcion: "Pago del servicio",
+                descripcion: detalle=="" ?"Pago del servicio":detalle,
                 saldo_anterior: 0,
                 a_cuenta: 0
             },{ transaction});
-            for (let index = 0; index < deudas.length; index++) {
+            for (let index = 0; index < deudas.length && monto > 0; index++) {
                 const deuda = deudas[index];
-                if(monto > 0){
-                    let isCancelado = monto >= deuda.monto;
-                    let detalleMovimiento = await DetalleMovimiento.create({
-                        monto: deuda.monto,
-                        fecha: new Date(),
-                        detalleusuariofacturaid: deuda.id,
-                        descripcion: "Pago del detalle de la deuda de la fecha "+deuda.fecha,
-                        movimientoid: movimiento.id
-                    },{transaction});
-                    if(isCancelado){
-                        deuda.monto_pago = deuda.monto;
-                        deuda.estado = DetalleUsuarioFactura.COMPLETADO;
-                    }else{
-                        deuda.monto_pago = monto;
-                    }
-                    await deuda.save({ transaction: transaction });
-                    monto = monto - deuda.monto;
+                let isCancelado = monto >= (deuda.monto - deuda.monto_pago);
+                let montoPago = 0;
+                let montoDeuda = deuda.monto - deuda.monto_pago;
+                if(isCancelado){
+                    montoPago = montoDeuda;
+                    deuda.monto_pago = deuda.monto;
+                    deuda.fecha_pago = new Date();
+                    deuda.estado = DetalleUsuarioFactura.COMPLETADO;
                 }else{
-                    break;
+                    deuda.monto_pago += monto;
+                    montoPago = monto;
                 }
+                let nameMes = nombresMeses[new Date(deuda.fecha).getMonth()];
+                // console.log("Deuda: "+deuda.monto+" Cancelado: "+isCancelado+" Monto que pago: "+montoPago+" Monto debe: "+ montoDeuda+" mes: "+nameMes);
+                let detalleMovimiento = await DetalleMovimiento.create({
+                    monto: parseFloat(montoPago).toFixed(2),
+                    fecha: new Date(),
+                    detalleusuariofacturaid: deuda.id,
+                    descripcion: "Pago de "+ deuda.Servicio.nombre+" de "+ nameMes,
+                    movimientoid: movimiento.id
+                },{transaction});
+                await deuda.save({ transaction: transaction });
+                monto -= montoPago;
+                monto = parseFloat(monto.toFixed(2))
             }
             if(monto > 0){
                 movimiento.a_cuenta = monto;
+                usuario.a_cuenta += monto;
                 await movimiento.save({ transaction: transaction });
-            }   
+            }
             await transaction.commit();
             return movimiento;
         } catch (error) {

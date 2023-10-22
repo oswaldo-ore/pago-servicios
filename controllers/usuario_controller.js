@@ -125,9 +125,8 @@ const UsuarioController = {
   async pagarDeudaDelUsuario(req,res){
     try {
       const {id}  = req.params;
-      const {monto} = req.body;
-      console.log(id,monto);
-      let movimiento = await detalleFactura.pagarDeudasNoCanceladasDeUnUsuario(id,monto);
+      const {monto,detalle = ""} = req.body;
+      let movimiento = await detalleFactura.pagarDeudasNoCanceladasDeUnUsuario(id,monto,detalle);
       return res.json(ResponseHelper.success(movimiento,ResponseHelper.listar("Deudas pagadas correctamente") ));
     } catch (error) {
       console.error('Error al listar el deudas:', error);

@@ -33,6 +33,11 @@ module.exports = (sequelize, DataTypes) => {
     cod_pais: DataTypes.STRING,
     telefono: DataTypes.STRING,
     estado: DataTypes.BOOLEAN,
+    a_cuenta:{
+      type: DataTypes.DOUBLE,
+      defaultValue: 0,
+      allowNull: false,
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
