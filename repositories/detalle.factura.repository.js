@@ -61,20 +61,20 @@ class DetalleUsuarioFacturaRepository {
                 const deuda = deudas[index];
                 let isCancelado = monto >= (deuda.monto - deuda.monto_pago);
                 let montoPago = 0;
-                let montoDeuda = deuda.monto - deuda.monto_pago;
+                let montoDeuda = parseFloat(deuda.monto) - parseFloat(deuda.monto_pago);
                 if(isCancelado){
                     montoPago = montoDeuda;
                     deuda.monto_pago = deuda.monto;
                     deuda.fecha_pago = new Date();
                     deuda.estado = DetalleUsuarioFactura.COMPLETADO;
                 }else{
-                    deuda.monto_pago += monto;
-                    montoPago = monto;
+                    deuda.monto_pago += parseFloat(monto);
+                    montoPago = parseFloat(monto);
                 }
                 let nameMes = nombresMeses[new Date(deuda.fecha).getMonth()];
-                // console.log("Deuda: "+deuda.monto+" Cancelado: "+isCancelado+" Monto que pago: "+montoPago+" Monto debe: "+ montoDeuda+" mes: "+nameMes);
+                console.log("Deuda: "+deuda.monto+" Cancelado: "+isCancelado+" Monto que pago: "+montoPago+" Monto debe: "+ montoDeuda+" mes: "+nameMes);
                 let detalleMovimiento = await DetalleMovimiento.create({
-                    monto: parseFloat(montoPago).toFixed(2),
+                    monto: montoPago,
                     fecha: new Date(),
                     detalleusuariofacturaid: deuda.id,
                     descripcion: "Pago de "+ deuda.Servicio.nombre+" de "+ nameMes,
@@ -82,7 +82,7 @@ class DetalleUsuarioFacturaRepository {
                 },{transaction});
                 await deuda.save({ transaction: transaction });
                 monto -= montoPago;
-                monto = parseFloat(monto.toFixed(2))
+                monto = parseFloat(monto.toFixed(2));
             }
             if(monto > 0){
                 movimiento.a_cuenta = monto;
