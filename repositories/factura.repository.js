@@ -282,7 +282,7 @@ class FacturaRepository {
                 }
             });
         } catch (error) {
-            console.log("Ocurrio un error"+error);
+            console.log("Ocurrio un error" + error);
         }
     }
 
