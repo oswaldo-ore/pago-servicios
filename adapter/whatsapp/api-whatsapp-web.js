@@ -171,6 +171,7 @@ class ApiWhatsappWeb extends ApiWhatsapp {
             this.RESPONSE.message = "Mensaje enviado correctamente";
             return this.RESPONSE;
         } catch (error) {
+            console.log(error);
             if (error.response.data.error) {
                 this.RESPONSE.state = false;
                 this.RESPONSE.message = error.response.data.error;
@@ -197,6 +198,7 @@ class ApiWhatsappWeb extends ApiWhatsapp {
             this.RESPONSE.message = "Mensaje enviado correctamente";
             return this.RESPONSE;
         } catch (error) {
+            console.log(error);
             if (error.response.data.error) {
                 this.RESPONSE.state = false;
                 this.RESPONSE.message = error.response.data.error;
