@@ -13,7 +13,12 @@ const moment = require('moment');
 const UsuarioRepository = require('./usuario.repository');
 const MovimientoRepository = require('./movimiento.repository');
 const medidor = require('../models/medidor');
-
+const apiWhatsappWeb = require('../adapter/whatsapp/api-whatsapp-web');
+const DetalleUsuarioFacturaRepository = require('./detalle.factura.repository');
+nombresMeses = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+];
 
 class FacturaRepository {
     constructor() {
@@ -84,11 +89,15 @@ class FacturaRepository {
                 include: [
                     {
                         model: Servicio,
+                    },
+                    {
+                        model: Usuario,
                     }
                 ]
             });
             let cambio = 0;
             let montoInicial = monto;
+            let montoAnterior = detalle.monto_pago;
             monto += detalle.monto_pago;
             if(monto >= detalle.monto){
                 cambio= monto - detalle.monto;
@@ -123,6 +132,7 @@ class FacturaRepository {
                 movimientoid: movimiento.id
             },{transaction});
             await transaction.commit();
+            this.enviarPagoDelServicioAlCliente(montoAnterior,descripcion,montoInicial,detalle);
             return detalle;
         } catch (error) {
             await transaction.rollback();
@@ -238,10 +248,63 @@ class FacturaRepository {
                 detallesFactura.push(detalle);
             }
             await transaction.commit();
+            await this.enviarFacturaASuscriptores(factura.id);
             return factura;
         } catch (error) {
             await transaction.rollback();
             throw new Error(error);
+        }
+    }
+
+    async enviarFacturaASuscriptores(facturaId,sessionId="12345"){
+        try {
+            let factura = await this.verFactura(facturaId);
+            let servicio = await factura.Servicio;
+            let usuarioRepository= new UsuarioRepository;
+            let usuarios = await usuarioRepository.conSuscripcionAlServicio(servicio.id);
+            let fecha =new Date(factura.fecha);
+            let nameMes = nombresMeses[fecha.getMonth()]+" - " + fecha.getFullYear();
+            let mensaje = `*Factura:* ${nameMes}\r\n*Servicio:* ${servicio.nombre}\r\n*Monto:* Bs. ${factura.monto}\r\n\r\n`;
+            let detalles = factura.DetalleUsuarioFacturas;
+            detalles.forEach(detalle => {
+                let usuario = detalle.Usuario;
+                mensaje+=`*${usuario.nombre}:* Bs. ${detalle.monto}\r\n`;
+            });
+
+            usuarios.forEach(async usuario =>  {
+                if(usuario.cod_pais != "" && usuario.telefono != ""){
+                    let number = usuario.cod_pais + usuario.telefono;
+                    if(factura.foto_factura != ""){
+                        let fotoFacturaUrl = "https://pagoservicio.tecnosoft.website" + factura.foto_factura;
+                        await apiWhatsappWeb.enviarMensajeFileForUrl(sessionId,number,fotoFacturaUrl);
+                    }
+                    await apiWhatsappWeb.enviarMensajeTexto(sessionId,number,mensaje.trim());
+                }
+            });
+        } catch (error) {
+            console.log("Ocurrio un error"+error);
+        }
+    }
+
+    async enviarPagoDelServicioAlCliente(montoAnterior,descripcion,montoInicial,detalle,sessionId="12345"){
+        try {
+            if(detalle.Usuario.cod_pais != "" && detalle.Usuario.telefono != ""){
+                let message = "*Registro del pago*\r\n\r\n";
+                message+=`${descripcion}\r\n\r\n`;
+                if(montoAnterior > 0){
+                    message+=`*Pago anterior:* Bs. ${montoAnterior}\r\n`;
+                }
+                message+=`*Monto Pago:* Bs. ${montoInicial}\r\n`;
+                if(detalle.estado == DetalleUsuarioFactura.COMPLETADO){
+                    message+=`*El pago fue completado*\r\n`;
+                }else{
+                    message+=`*Saldo debe:* ${(detalle.monto - detalle.monto_pago).toFixed(2)}\r\n`;
+                }
+                let number= detalle.Usuario.cod_pais+detalle.Usuario.telefono;
+                await apiWhatsappWeb.enviarMensajeTexto(sessionId,number,message);
+            }
+        } catch (error) {
+            console.log("ocurrio un error al enviar al whatsapp",error);
         }
     }
 

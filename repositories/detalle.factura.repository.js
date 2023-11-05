@@ -1,3 +1,6 @@
+const { now } = require('moment');
+const apiWhatsappWeb = require('../adapter/whatsapp/api-whatsapp-web');
+const moment = require('moment');
 const {
     Factura,
     DetalleUsuarioFactura,
@@ -57,29 +60,46 @@ class DetalleUsuarioFacturaRepository {
                 saldo_anterior: 0,
                 a_cuenta: 0
             },{ transaction});
+            let message = `*Infome del pago - Bs. ${monto}*\r\n\r\n`;
+            let now = moment();
+            let formattedDate = now.format('DD-MM-YYYY HH:mm');
+            message+= `*Fecha:* ${formattedDate}\r\n`;
+            message+= `${usuario.nombre} ${usuario.apellidos}\r\n\r\n`;
             for (let index = 0; index < deudas.length && monto > 0; index++) {
                 const deuda = deudas[index];
                 let isCancelado = monto >= (deuda.monto - deuda.monto_pago);
                 let montoPago = 0;
                 let montoDeuda = parseFloat(deuda.monto) - parseFloat(deuda.monto_pago);
+                let messageDeuda = "";
+                let montoAnterior = deuda.monto_pago;
                 if(isCancelado){
                     montoPago = montoDeuda;
                     deuda.monto_pago = deuda.monto;
                     deuda.fecha_pago = new Date();
                     deuda.estado = DetalleUsuarioFactura.COMPLETADO;
+                    messageDeuda ="La deuda ha sido saldada";
                 }else{
                     deuda.monto_pago += parseFloat(monto);
                     montoPago = parseFloat(monto);
+                    messageDeuda =`*Deuda pendiente:*\r\n*Debe:* Bs. ${(deuda.monto - deuda.monto_pago).toFixed()}`;
                 }
                 let nameMes = nombresMeses[new Date(deuda.fecha).getMonth()];
-                console.log("Deuda: "+deuda.monto+" Cancelado: "+isCancelado+" Monto que pago: "+montoPago+" Monto debe: "+ montoDeuda+" mes: "+nameMes);
+                let year = new Date(deuda.fecha).getFullYear();
+                // console.log("Deuda: "+deuda.monto+" Cancelado: "+isCancelado+" Monto que pago: "+montoPago+" Monto debe: "+ montoDeuda+" mes: "+nameMes);
                 let detalleMovimiento = await DetalleMovimiento.create({
                     monto: montoPago,
                     fecha: new Date(),
                     detalleusuariofacturaid: deuda.id,
-                    descripcion: "Pago de "+ deuda.Servicio.nombre+" de "+ nameMes,
+                    descripcion: "Pago de "+ deuda.Servicio.nombre+" de "+ nameMes+" - "+year,
                     movimientoid: movimiento.id
                 },{transaction});
+                let messageMontoAnterior = ``;
+                if(montoAnterior > 0){
+                    messageMontoAnterior=`_~*Monto Pago Anterior:* Bs. ${montoAnterior}~_\r\n`;
+                }
+                message+="---------------------------\r\n";
+                message+=`*Servicio:* ${deuda.Servicio.nombre}\r\n*Mes:* ${nameMes+" - "+year}\r\n*Deuda:* Bs ${deuda.monto}\r\n${messageMontoAnterior}*Monto Cancelado:* Bs.${montoPago}\r\n${messageDeuda}\r\n`
+                message+="---------------------------\r\n";
                 await deuda.save({ transaction: transaction });
                 monto -= montoPago;
                 monto = parseFloat(monto.toFixed(2));
@@ -90,6 +110,14 @@ class DetalleUsuarioFacturaRepository {
                 await movimiento.save({ transaction: transaction });
             }
             await transaction.commit();
+            try {
+                if(usuario.cod_pais!="" && usuario.telefono != ""){
+                    let number = usuario.cod_pais+usuario.telefono;
+                    apiWhatsappWeb.enviarMensajeTexto("12345",number,message);
+                }
+            } catch (error) {
+                console.log("ocurrio un error " + error);
+            }
             return movimiento;
         } catch (error) {
             await transaction.rollback();

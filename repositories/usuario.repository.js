@@ -162,6 +162,21 @@ class UsuarioRepository {
       ],
     });
   }
+  async conSuscripcionAlServicio(servicioid) {
+    return await Usuario.findAll({
+      include: [
+        {
+          model: Suscripcion,
+          as: 'Suscripciones',
+          required: true,
+          where: {
+            servicioid: servicioid,
+            habilitado: true,
+          },
+        },
+      ],
+    });
+  }
 
   async sinRegistroDelMedidorPorFecha(fecha, servicioid) {
     const usuariosConSuscripcion = await this.conSuscripcionDelServicio(servicioid);
