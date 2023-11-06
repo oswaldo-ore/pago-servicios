@@ -70,6 +70,12 @@ const WhatsappController = {
             console.log(error);
             return res.json(ResponseHelper.error(error));
         }
+    },
+
+    async actualizarFacturas(req,res){
+        const facturaRepository = new FacturaRepository();
+        await facturaRepository.actualizarEstadoDeLasFacturas();
+        return res.json("holaclce");
     }
 }
 

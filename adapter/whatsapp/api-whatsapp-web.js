@@ -5,7 +5,7 @@ const validatePhoneNumber = require('validate-phone-number-node-js');
 class ApiWhatsappWeb extends ApiWhatsapp {
     constructor() {
         super(); // Llama al constructor de la clase base
-        this.URL = "http://a.tecnosoft.website:3000"; // Propiedad específica de ApiWhatsappWeb
+        this.URL = "https://a.tecnosoft.website:3000"; // Propiedad específica de ApiWhatsappWeb
         this.RESPONSE = {
             state: "",
             message: "",

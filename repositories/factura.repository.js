@@ -154,6 +154,22 @@ class FacturaRepository {
             await factura.save();
         }
     }
+    async actualizarEstadoDeLasFacturas(){
+        let facturas = await this.getFacturasNoPagadas();
+        facturas.forEach(factura => {
+            this.verificarSiLaFacturaPagada(factura.id);
+        });
+    }
+    async getFacturasNoPagadas(){
+        let facturas = await Factura.findAll({
+            where:{
+                estado: {
+                    [Op.not]: Factura.CANCELADO
+                },
+            }
+        });
+        return facturas;
+    }
 
     async cambiarEstadoFacturaACanceladoPrestamo(facturaId){
         let factura = await this.verFactura(facturaId);

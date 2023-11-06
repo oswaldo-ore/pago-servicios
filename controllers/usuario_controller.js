@@ -1,9 +1,11 @@
 const UsuarioRepository = require('../repositories/usuario.repository');
 const DetalleUsuarioFacturaRepository = require('../repositories/detalle.factura.repository');
 const ResponseHelper = require('../utils/helper_response');
+const FacturaRepository = require('../repositories/factura.repository');
 
 const usuarioRepository = new UsuarioRepository();
 const detalleFactura = new DetalleUsuarioFacturaRepository();
+const facturaRepository = new FacturaRepository();
 
 const UsuarioController = {
   async listarUsuarios(req, res) {
@@ -127,6 +129,7 @@ const UsuarioController = {
       const {id}  = req.params;
       const {monto,detalle = ""} = req.body;
       let movimiento = await detalleFactura.pagarDeudasNoCanceladasDeUnUsuario(id,monto,detalle);
+      await facturaRepository.actualizarEstadoDeLasFacturas();
       return res.json(ResponseHelper.success(movimiento,ResponseHelper.listar("Deudas pagadas correctamente") ));
     } catch (error) {
       console.error('Error al listar el deudas:', error);
