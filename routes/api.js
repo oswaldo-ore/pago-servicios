@@ -19,7 +19,7 @@ router.post('/session/status', WhatsappController.statusSession);
 router.post('/session/qr/image', WhatsappController.getSessionQrImage);
 router.post('/session/qr', WhatsappController.getSessionQrBase64);
 router.post('/session/enviarmensaje', WhatsappController.enviarMensaje);
-router.post('/facturaactualizarfacturas', WhatsappController.enviarMensaje);
+router.post('/facturaactualizarfacturas', WhatsappController.actualizarFacturas);
 router.post('/admin/login',LoginController.loginAdmin);
 
 router.use(jwtMiddleware);
