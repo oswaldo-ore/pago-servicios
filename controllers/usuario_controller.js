@@ -2,6 +2,7 @@ const UsuarioRepository = require('../repositories/usuario.repository');
 const DetalleUsuarioFacturaRepository = require('../repositories/detalle.factura.repository');
 const ResponseHelper = require('../utils/helper_response');
 const FacturaRepository = require('../repositories/factura.repository');
+const apiWhatsappWeb = require('../adapter/whatsapp/api-whatsapp-web');
 
 const usuarioRepository = new UsuarioRepository();
 const detalleFactura = new DetalleUsuarioFacturaRepository();
@@ -135,6 +136,11 @@ const UsuarioController = {
       console.error('Error al listar el deudas:', error);
       return res.json(ResponseHelper.error('Error al pagar las deudas' ));
     }
+  },
+ 
+  async test(req,res){
+    await usuarioRepository.notificarPorWhatsappLasDeudasPendientes();
+    return res.json("hola");
   }
 };
 

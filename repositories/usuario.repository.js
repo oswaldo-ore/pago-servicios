@@ -1,6 +1,7 @@
-const { Usuario, Suscripcion, Servicio, Medidor } = require('../models');
+const { Usuario, Suscripcion, Servicio, Medidor,DetalleUsuarioFactura,Factura } = require('../models');
 const { Op } = require('sequelize');
 const { sequelize } = require('../models');
+const apiWhatsappWeb = require('../adapter/whatsapp/api-whatsapp-web');
 class UsuarioRepository {
   async listarUsuarios(page, limit) {
     const offset = (page - 1) * limit;
@@ -290,6 +291,53 @@ class UsuarioRepository {
     });
   }
 
+  async getUserConFacturasNoPagadas(){
+    return await Usuario.findAll({
+      include: [
+        {
+          model: DetalleUsuarioFactura,
+          as: "DetalleUsuarioFactura",
+          include:[
+            {
+              model: Factura,
+            },
+            {
+              model: Servicio
+            }
+          ],
+          where:{
+            [Op.or]: [
+              { estado: { [Op.not]: DetalleUsuarioFactura.COMPLETADO } },
+            ],
+          }
+        }
+      ],
+    });
+  }
+
+  async notificarPorWhatsappLasDeudasPendientes(){
+    let users = await this.getUserConFacturasNoPagadas();
+    for (let index = 0; index < users.length; index++) {
+      const user = users[index]; 
+      if(user.cod_pais != "" && user.telefono != ""){
+        let message = user.nombre+" " + user.apellidos+"\r\n";
+        message += "*Tienes deudas pendientes.*"+"\r\n\r\n";
+        let montoTotal = 0;
+        user.DetalleUsuarioFactura.forEach(detalle => {
+            message+=`*Servicio:* ${detalle.Servicio.nombre}\r\n`;
+            message+=`*Fecha:* ${detalle.Factura.getFechaFormateada()}\r\n`;
+            message+=`*Monto:* Bs. ${detalle.monto.toFixed(2)}\r\n`;
+            message+=`*Pago:* Bs. ${detalle.monto_pago.toFixed(2)}\r\n`;
+            message+=`*Debe:* Bs. ${(detalle.monto-detalle.monto_pago).toFixed(2)}\r\n`;
+            message+=`-------------------------------------\r\n\r\n`;
+            let saldo = detalle.monto - detalle.monto_pago;
+            montoTotal += saldo < 0 ? 0: saldo;
+        });
+        message+= `*Monto Total Debe: Bs. ${montoTotal.toFixed(2)}*`;
+        await apiWhatsappWeb.enviarMensajeTexto("12345",user.cod_pais+user.telefono,message);
+      }
+    }
+  }
 }
 
 module.exports = UsuarioRepository;

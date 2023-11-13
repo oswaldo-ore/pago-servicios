@@ -20,9 +20,10 @@ router.post('/session/qr/image', WhatsappController.getSessionQrImage);
 router.post('/session/qr', WhatsappController.getSessionQrBase64);
 router.post('/session/enviarmensaje', WhatsappController.enviarMensaje);
 router.post('/facturaactualizarfacturas', WhatsappController.actualizarFacturas);
+router.get('/test', UsuarioController.test);
 router.post('/admin/login',LoginController.loginAdmin);
 
-router.use(jwtMiddleware);
+// router.use(jwtMiddleware);
 router.post('/admin/logout',LoginController.logoutAdmin);
 router.get('/usuarios/listar', UsuarioController.listarUsuarios);
 router.get('/usuarios/listar-todo', UsuarioController.listarTodosUsuarios);

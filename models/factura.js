@@ -2,15 +2,23 @@
 
 const { Model } = require('sequelize');
 const { Sequelize } = require('sequelize');
-
+const moment = require('moment');
+require('moment/locale/es');
 module.exports = (sequelize, DataTypes) => {
+
   class Factura extends Model {
     static PENDIENTE = 0;
     static PRESTADO = 1;
     static CANCELADO = 2;
     static associate(models) {
-        Factura.belongsTo(models.Servicio, { foreignKey: 'servicioid' });  
-        Factura.hasMany(models.DetalleUsuarioFactura, { foreignKey: 'facturaid' });  
+      Factura.belongsTo(models.Servicio, { foreignKey: 'servicioid' });
+      Factura.hasMany(models.DetalleUsuarioFactura, { foreignKey: 'facturaid' });
+    }
+    getFechaFormateada() {
+      moment.locale('es'); // Configura el idioma a español
+      const formattedDate = moment(this.fecha).format('MMMM-YYYY');
+      const capitalizeFormattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+      return capitalizeFormattedDate;
     }
 
     toJSON() {
@@ -28,8 +36,8 @@ module.exports = (sequelize, DataTypes) => {
       monto: DataTypes.DOUBLE,
       fecha: DataTypes.DATEONLY,
       foto_factura: DataTypes.STRING,
-      ispagado:DataTypes.BOOLEAN,
-      estado:DataTypes.INTEGER,
+      ispagado: DataTypes.BOOLEAN,
+      estado: DataTypes.INTEGER,
       notifico: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

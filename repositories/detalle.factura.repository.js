@@ -147,6 +147,36 @@ class DetalleUsuarioFacturaRepository {
         });
         return detallesPagados;
     }
+
+    async deudasNoCanceladas() {
+        const detallesPrestadosNoCancelados = await DetalleUsuarioFactura.findAll({
+            include: [
+                {
+                    model: Usuario,
+                    required: true
+                },
+                {
+                    model: Servicio,
+                    required: false,
+                },
+                {
+                    model: Factura,
+                    required: false,
+                }
+            ],
+            where: {
+                estado: {
+                    [Op.or]: [DetalleUsuarioFactura.PENDIENTE, DetalleUsuarioFactura.PRESTADO ] 
+                }
+            },
+            order: [
+                ["fecha","ASC"],
+                ["usuarioid","ASC"]
+            ]
+        });
+        return detallesPrestadosNoCancelados;
+    }
+
 }
 
 module.exports = DetalleUsuarioFacturaRepository;
