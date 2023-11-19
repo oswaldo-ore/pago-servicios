@@ -12,6 +12,7 @@ const {
 
 const router = express.Router();
 const multer  = require('multer');
+const DeudaMensualController = require('../controllers/deuda_mensual_controller');
 const upload = multer({
     storage: multer.memoryStorage(),
 });
@@ -21,6 +22,8 @@ router.post('/session/qr', WhatsappController.getSessionQrBase64);
 router.post('/session/enviarmensaje', WhatsappController.enviarMensaje);
 router.post('/facturaactualizarfacturas', WhatsappController.actualizarFacturas);
 router.get('/test', UsuarioController.test);
+router.get('/test2', DeudaMensualController.generarDeudaMensuales);
+router.get('/test3', DeudaMensualController.getAllDeudasMensuales);
 router.post('/admin/login',LoginController.loginAdmin);
 
 router.use(jwtMiddleware);
@@ -62,4 +65,7 @@ router.put('/factura/:id/estado-prestado', FacturaController.cambiarEstadoPresta
 
 router.post("/detalle/factura/pagar",FacturaController.pagarFactura);
 router.post("/detalle/factura/devolver",FacturaController.devolverPrestamoDelPago);
+
+router.get('/deudas-mensuales', DeudaMensualController.getAllDeudasMensuales);
+
 module.exports = router;

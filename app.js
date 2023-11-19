@@ -8,8 +8,7 @@ var indexRouter = require('./routes/index');
 var apiRoutes = require('./routes/api');
 var app = express();
 const cors = require('cors'); 
-const cron = require('node-cron');
-const UsuarioRepository = require('./repositories/usuario.repository');
+const TareaProgramada = require('./cron-job/tarea-programada');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -47,19 +46,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-const tareaDia20 = cron.schedule('0 0 20 * *', () => {
-  console.log('Tarea programada el día 20 de cada mes ejecutada:');
-  const usuarioRepository = new UsuarioRepository();
-  usuarioRepository.notificarPorWhatsappLasDeudasPendientes();
-});
-
-const tareaFinDeMes = cron.schedule('0 0 28 * *', () => {//no se pudo el fin de mes solo el 28
-  console.log('Tarea programada al final de cada mes ejecutada:');
-  const usuarioRepository = new UsuarioRepository();
-  usuarioRepository.notificarPorWhatsappLasDeudasPendientes();
-});
-
-tareaDia20.start();
-tareaFinDeMes.start();
-
+let tareaProgramadas = new TareaProgramada();
+tareaProgramadas.iniciarTareas(); 
 module.exports = app;
