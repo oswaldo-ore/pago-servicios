@@ -37,6 +37,7 @@ class TareaProgramada {
         });
 
         this.prueba = cron.schedule('* * * * *',()=>{
+            console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
             console.log("Tarea programada ejecutandose");
         });
     }
