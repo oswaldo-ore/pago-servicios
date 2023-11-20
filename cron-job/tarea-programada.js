@@ -35,12 +35,17 @@ class TareaProgramada {
 
             }
         });
+
+        this.prueba = cron.schedule('* * * * *',()=>{
+            console.log("Tarea programada ejecutandose");
+        });
     }
 
     iniciarTareas() {
         this.tareaDia20.start();
         this.tareaFinDeMes.start();
         this.crearDeudaMensuales.start();
+        this.prueba.start();
     }
 
     detenerTareas() {
