@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // app.use(express.json());
 app.use(cors({
   origin:[
-    'https://pagoservicio.tecnosoft.xyz',
+    'https://pagoservicios.tecnosoft.xyz',
     'http://localhost:4200',
   ] , // Permitir solicitudes desde tu aplicación Angular
   credentials: true // Si estás manejando cookies u otras credenciales
