@@ -10,7 +10,7 @@ class TareaProgramada {
             this.ejecutarNotificaciones();
         });
 
-        this.tareaFinDeMes = cron.schedule('22 23 28 * *', () => {
+        this.tareaFinDeMes = cron.schedule('25 22 28 * *', () => {
             this.ejecutarNotificaciones();
         });
         this.crearDeudaMensuales = cron.schedule('59 23 * * *', async () => {
