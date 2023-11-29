@@ -14,7 +14,7 @@ class TareaProgramada {
         this.tareaFinDeMes = scheduleJob({ day: 28, hour: 9, minute: 0, tz: this.zonaHorariaBolivia }, () => {
             this.ejecutarNotificaciones();
         });
-        this.crearDeudaMensuales = scheduleJob('59 23 * * *', async () => {
+        this.crearDeudaMensuales = scheduleJob({ hour: 23, minute: 55, tz: this.zonaHorariaBolivia },async () => {
             try {
                 console.log('Tarea programada para crear deudas mensualmente');
                 let today = moment().tz('America/La_Paz').format('YYYY-MM-DD HH:mm:ss');
@@ -31,11 +31,11 @@ class TareaProgramada {
             } catch (error) {
                 let today = moment().format('YYYY-MM-DD HH:mm');
                 await apiWhatsappWeb.enviarMensajeTexto("12345","+59162008498", "Erro al crear deudas mensuales\r\n*"+today+"*\r\n"+error.message);
-
             }
         });
 
-        this.prueba = scheduleJob({ day: 28, hour: 23, minute: 46, tz: this.zonaHorariaBolivia },()=>{
+        this.prueba = scheduleJob({minute: 1, tz: this.zonaHorariaBolivia },()=>{
+            moment.locale('es');
             console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
             console.log("Tarea programada ejecutandose");
         });

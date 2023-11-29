@@ -33,7 +33,6 @@ class DeudaMensualRepository {
                 throw new Error("Ya existe deuda mensuales de este mes");
             }
             let deudasUsuarios = await this.usuarioRepository.getUserConFacturasNoPagadas();
-            moment.locale('es');
             for (let index = 0; index < deudasUsuarios.length; index++) {
                 const deudas = deudasUsuarios[index].DetalleUsuarioFactura;
                 const usuario = deudasUsuarios[index];
