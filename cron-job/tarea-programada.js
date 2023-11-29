@@ -1,19 +1,20 @@
-const cron = require('node-cron');
 const UsuarioRepository = require('../repositories/usuario.repository');
 const DeudaMensualRepository = require('../repositories/deuda.mensual.repository');
 const moment = require('moment-timezone');
 const apiWhatsappWeb = require('../adapter/whatsapp/api-whatsapp-web');
+const { scheduleJob } = require('node-schedule');
 
 class TareaProgramada {
+    zonaHorariaBolivia = 'America/La_Paz';
     constructor() {
-        this.tareaDia20 = cron.schedule('0 9 20 * *', () => {
+        this.tareaDia20 = scheduleJob({ day: 20, hour: 9, minute: 0,  tz: this.zonaHorariaBolivia }, () => {
             this.ejecutarNotificaciones();
         });
 
-        this.tareaFinDeMes = cron.schedule('25 22 28 * *', () => {
+        this.tareaFinDeMes = scheduleJob({ day: 28, hour: 9, minute: 0, tz: this.zonaHorariaBolivia }, () => {
             this.ejecutarNotificaciones();
         });
-        this.crearDeudaMensuales = cron.schedule('59 23 * * *', async () => {
+        this.crearDeudaMensuales = scheduleJob('59 23 * * *', async () => {
             try {
                 console.log('Tarea programada para crear deudas mensualmente');
                 let today = moment().tz('America/La_Paz').format('YYYY-MM-DD HH:mm:ss');
@@ -34,30 +35,21 @@ class TareaProgramada {
             }
         });
 
-        this.prueba = cron.schedule('* * * * *',()=>{
+        this.prueba = scheduleJob({ day: 28, hour: 23, minute: 46, tz: this.zonaHorariaBolivia },()=>{
             console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
             console.log("Tarea programada ejecutandose");
         });
     }
 
     iniciarTareas() {
-        this.tareaDia20.start();
-        this.tareaFinDeMes.start();
-        this.crearDeudaMensuales.start();
-        this.prueba.start();
+        // this.tareaDia20.start();
+        // this.tareaFinDeMes.start();
+        // this.crearDeudaMensuales.start();
+        // this.prueba.start();
     }
 
     detenerTareas() {
-        if (this.tareaDia20) {
-            this.tareaDia20.stop();
-        }
-
-        if (this.tareaFinDeMes) {
-            this.tareaFinDeMes.stop();
-        }
-        if (this.crearDeudaMensuales) {
-            this.crearDeudaMensuales.stop();
-        }
+        
     }
 
     async ejecutarNotificaciones() {
