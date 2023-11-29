@@ -6,13 +6,11 @@ const apiWhatsappWeb = require('../adapter/whatsapp/api-whatsapp-web');
 
 class TareaProgramada {
     constructor() {
-        this.tareaDia20 = cron.schedule('0 0 20 * *', () => {
-            console.log('Tarea programada el día 20 de cada mes ejecutada:');
+        this.tareaDia20 = cron.schedule('0 9 20 * *', () => {
             this.ejecutarNotificaciones();
         });
 
-        this.tareaFinDeMes = cron.schedule('0 0 28 * *', () => {
-            console.log('Tarea programada al final de cada mes ejecutada:');
+        this.tareaFinDeMes = cron.schedule('0 9 28 * *', () => {
             this.ejecutarNotificaciones();
         });
         this.crearDeudaMensuales = cron.schedule('59 23 * * *', async () => {
