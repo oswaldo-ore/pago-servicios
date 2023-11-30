@@ -34,10 +34,11 @@ class TareaProgramada {
             }
         });
 
-        this.prueba = scheduleJob({minute: '*/5', tz: this.zonaHorariaBolivia },()=>{
+        this.prueba = scheduleJob({minute: '*/5', tz: this.zonaHorariaBolivia },async ()=>{
             moment.locale('es');
             console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
             console.log("Tarea programada ejecutandose");
+            await apiWhatsappWeb.enviarMensajeTexto("12345","+59162008498", "Cada 5 min: horaSErvidor\r\n "+moment().format('YYYY-MM-DD HH:mm:ss'));
         });
     }
 
