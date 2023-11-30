@@ -34,7 +34,7 @@ class TareaProgramada {
             }
         });
 
-        this.prueba = scheduleJob({minute: '*/5', tz: this.zonaHorariaBolivia },async ()=>{
+        this.prueba = scheduleJob({ rule: '* */2 * * *', tz: this.timeZone },async ()=>{
             moment.locale('es');
             console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
             console.log("Tarea programada ejecutandose");
