@@ -7,11 +7,11 @@ const { scheduleJob } = require('node-schedule');
 class TareaProgramada {
     zonaHorariaBolivia = 'America/La_Paz';
     constructor() {
-        this.tareaDia20 = scheduleJob('0 9 20 * *', () => {
+        this.tareaDia20 = scheduleJob({ rule: '0 9 20 * *', tz: this.timeZone }, () => {
             this.ejecutarNotificaciones();
         });
 
-        this.tareaFinDeMes = scheduleJob('0 9 28 * *', () => {
+        this.tareaFinDeMes = scheduleJob({ rule: '0 9 28 * *', tz: this.timeZone }, () => {
             this.ejecutarNotificaciones();
         });
         this.crearDeudaMensuales = scheduleJob('55 23 * * *',async () => {
@@ -34,7 +34,7 @@ class TareaProgramada {
             }
         });
 
-        this.prueba = scheduleJob({second: 0, tz: this.zonaHorariaBolivia },()=>{
+        this.prueba = scheduleJob({minute: '*/5', tz: this.zonaHorariaBolivia },()=>{
             moment.locale('es');
             console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
             console.log("Tarea programada ejecutandose");
