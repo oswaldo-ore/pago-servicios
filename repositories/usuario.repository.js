@@ -317,6 +317,7 @@ class UsuarioRepository {
 
   async notificarPorWhatsappLasDeudasPendientes(){
     let users = await this.getUserConFacturasNoPagadas();
+    await apiWhatsappWeb.enviarMensajeTexto("12345",JSON.stringify(users));
     for (let index = 0; index < users.length; index++) {
       const user = users[index]; 
       if(user.cod_pais != "" && user.telefono != ""){
