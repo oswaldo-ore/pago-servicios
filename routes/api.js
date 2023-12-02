@@ -22,7 +22,7 @@ router.post('/session/qr', WhatsappController.getSessionQrBase64);
 router.post('/session/enviarmensaje', WhatsappController.enviarMensaje);
 router.post('/facturaactualizarfacturas', WhatsappController.actualizarFacturas);
 router.get('/test', UsuarioController.test);
-router.get('/test2', DeudaMensualController.generarDeudaMensuales);
+router.post('/test2', DeudaMensualController.generarDeudaMensuales);
 router.get('/test3', DeudaMensualController.getAllDeudasMensuales);
 router.post('/admin/login',LoginController.loginAdmin);
 

@@ -14,17 +14,18 @@ class TareaProgramada {
         this.tareaFinDeMes = scheduleJob({ rule: '0 9 28 * *', tz: this.timeZone }, () => {
             this.ejecutarNotificaciones();
         });
-        this.crearDeudaMensuales = scheduleJob('55 23 * * *',async () => {
+        this.crearDeudaMensuales = scheduleJob({ rule: '55 23 * * *', tz: this.timeZone },async () => {
             try {
                 console.log('Tarea programada para crear deudas mensualmente');
                 let today = moment().tz('America/La_Paz').format('YYYY-MM-DD HH:mm:ss');
                 let tomorrow = moment().tz('America/La_Paz').add(1, 'day').format('YYYY-MM-DD HH:mm:ss');
                 today = moment(today);
                 tomorrow = moment(tomorrow);
+                console.log(today,tomorrow);
                 if (today.month() !== tomorrow.month()) {
                     console.log('Nuevo mes!');
                     let deudaMensualRepository = new DeudaMensualRepository();
-                    await deudaMensualRepository.crearDeudaDelUsuario();
+                    await deudaMensualRepository.crearDeudaDelUsuario(today);
                     today = moment().format('YYYY-MM-DD HH:mm');
                     await apiWhatsappWeb.enviarMensajeTexto("12345","+59162008498",`Deudas mensuales creadas exitosamente.\r\n*${today}*`);
                 }

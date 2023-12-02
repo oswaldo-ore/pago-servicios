@@ -14,14 +14,13 @@ class DeudaMensualRepository {
         this.detalleUsuarioFacturaRepository = new DetalleUsuarioFacturaRepository();
     }
 
-    async crearDeudaDelUsuario() {
+    async crearDeudaDelUsuario(fecha = moment().tz('America/La_Paz').format('YYYY-MM-DD')) {
         const transaction = await sequelize.transaction();
         try {
-            const fecha = moment().tz('America/La_Paz');
             let mes = moment(fecha).format('MMMM-YYYY');
             moment.locale('es');
-            const startOfMonth = moment().tz('America/La_Paz').startOf('month').startOf('day').format('YYYY-MM-DD HH:mm:ss');
-            const endOfMonth = moment().tz('America/La_Paz').endOf('month').endOf('day').format('YYYY-MM-DD HH:mm:ss');
+            const startOfMonth = moment(fecha).tz('America/La_Paz').startOf('month').startOf('day').format('YYYY-MM-DD HH:mm:ss');
+            const endOfMonth = moment(fecha).tz('America/La_Paz').endOf('month').endOf('day').format('YYYY-MM-DD HH:mm:ss');
             const existingRecord = await DeudaMensual.findOne({
                 where: {
                     fecha: {
@@ -69,7 +68,7 @@ class DeudaMensualRepository {
                 deudaMensualUsuario.monto = parseFloat(montoTotal.toFixed(2));
                 deudaMensualUsuario.monto_pago = parseFloat(montoPago.toFixed(2));
                 deudaMensualUsuario.monto_debe = parseFloat(montoDebe.toFixed(2));
-                deudaMensualUsuario.save();;
+                deudaMensualUsuario.save();
             }
             await transaction.commit();
         } catch (error) {

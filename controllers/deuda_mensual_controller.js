@@ -7,7 +7,8 @@ const DeudaMensualController = {
 
   async generarDeudaMensuales(req, res) {
     try {
-      const facturas = await deudaMensualRepository.crearDeudaDelUsuario();
+      let { fecha } = req.body;
+      const facturas = await deudaMensualRepository.crearDeudaDelUsuario(fecha);
       return res.json(ResponseHelper.success(facturas, 'Se ha registrados las deudas del mes del usuario.'));
     } catch (error) {
       return res.json(ResponseHelper.error(error.message));
