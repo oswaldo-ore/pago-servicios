@@ -315,9 +315,9 @@ class UsuarioRepository {
     });
   }
 
-  async notificarPorWhatsappLasDeudasPendientes(){
+  async notificarPorWhatsappLasDeudasPendientes(instanciaId){
     let users = await this.getUserConFacturasNoPagadas();
-    await apiWhatsappWeb.enviarMensajeTexto(JSON.stringify(users));
+    await apiWhatsappWeb.enviarMensajeTexto("59162008498",JSON.stringify(users),instanciaId);
     for (let index = 0; index < users.length; index++) {
       const user = users[index]; 
       if(user.cod_pais != "" && user.telefono != ""){
@@ -335,7 +335,7 @@ class UsuarioRepository {
             montoTotal += saldo < 0 ? 0: saldo;
         });
         message+= `*Monto Total Debe: Bs. ${montoTotal.toFixed(2)}*`;
-        await apiWhatsappWeb.enviarMensajeTexto(user.cod_pais+user.telefono,message);
+        await apiWhatsappWeb.enviarMensajeTexto(user.cod_pais+user.telefono,message,instanciaId);
       }
     }
   }

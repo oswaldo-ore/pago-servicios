@@ -25,5 +25,8 @@ class ApiWhatsapp {
 
   async enviarMensajeTexto(number, message,sessionId) {
   }
+
+  async getClientInfo(sessionId){
+  }
 }
 module.exports = ApiWhatsapp;

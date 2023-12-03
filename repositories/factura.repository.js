@@ -11,10 +11,9 @@ const { Op } = require('sequelize');
 const SaveImage = require('../utils/save_images');
 const moment = require('moment');
 const UsuarioRepository = require('./usuario.repository');
-const MovimientoRepository = require('./movimiento.repository');
-const medidor = require('../models/medidor');
 const apiWhatsappWeb = require('../adapter/whatsapp/api-whatsapp-web');
-const DetalleUsuarioFacturaRepository = require('./detalle.factura.repository');
+const ConfiguracionRepository = require('./configuracion.repository');
+const configuracionRepository = new ConfiguracionRepository();
 nombresMeses = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
@@ -132,7 +131,12 @@ class FacturaRepository {
                 movimientoid: movimiento.id
             },{transaction});
             await transaction.commit();
-            this.enviarPagoDelServicioAlCliente(montoAnterior,descripcion,montoInicial,detalle);
+            let configuracion = await configuracionRepository.getConfiguracion();
+            console.log("--------------------------------------");
+            console.log(configuracion.estado_conexion);
+            if(configuracion.estado_conexion){
+                this.enviarPagoDelServicioAlCliente(montoAnterior,descripcion,montoInicial,detalle,configuracion.instancia_id);
+            }
             return detalle;
         } catch (error) {
             await transaction.rollback();
@@ -264,7 +268,10 @@ class FacturaRepository {
                 detallesFactura.push(detalle);
             }
             await transaction.commit();
-            await this.enviarFacturaASuscriptores(factura.id);
+            let configuracion = await configuracionRepository.getConfiguracion();
+            if(configuracion.estado_conexion){
+                await this.enviarFacturaASuscriptores(factura.id,configuracion.instancia_id);
+            }
             return factura;
         } catch (error) {
             await transaction.rollback();
@@ -272,7 +279,7 @@ class FacturaRepository {
         }
     }
 
-    async enviarFacturaASuscriptores(facturaId,sessionId="12345"){
+    async enviarFacturaASuscriptores(facturaId,sessionId){
         try {
             let factura = await this.verFactura(facturaId);
             let servicio = await factura.Servicio;
@@ -286,15 +293,14 @@ class FacturaRepository {
                 let usuario = detalle.Usuario;
                 mensaje+=`*${usuario.nombre}:* Bs. ${detalle.monto}\r\n`;
             });
-
             usuarios.forEach(async usuario =>  {
                 if(usuario.cod_pais != "" && usuario.telefono != ""){
                     let number = usuario.cod_pais + usuario.telefono;
                     if(factura.foto_factura != ""){
                         let fotoFacturaUrl = "https://servicios.tecnosoft.website" + factura.foto_factura;
-                        await apiWhatsappWeb.enviarMensajeFileForUrl(number,fotoFacturaUrl);
+                        await apiWhatsappWeb.enviarMensajeFileForUrl(number,fotoFacturaUrl,sessionId);
                     }
-                    await apiWhatsappWeb.enviarMensajeTexto(number,mensaje.trim());
+                    await apiWhatsappWeb.enviarMensajeTexto(number,mensaje.trim(),sessionId);
                 }
             });
         } catch (error) {
@@ -302,7 +308,7 @@ class FacturaRepository {
         }
     }
 
-    async enviarPagoDelServicioAlCliente(montoAnterior,descripcion,montoInicial,detalle,sessionId="12345"){
+    async enviarPagoDelServicioAlCliente(montoAnterior,descripcion,montoInicial,detalle,sessionId){
         try {
             if(detalle.Usuario.cod_pais != "" && detalle.Usuario.telefono != ""){
                 let message = "*Registro del pago*\r\n\r\n";
@@ -317,7 +323,7 @@ class FacturaRepository {
                     message+=`*Saldo debe:* ${(detalle.monto - detalle.monto_pago).toFixed(2)}\r\n`;
                 }
                 let number= detalle.Usuario.cod_pais+detalle.Usuario.telefono;
-                await apiWhatsappWeb.enviarMensajeTexto(number,message);
+                await apiWhatsappWeb.enviarMensajeTexto(number,message,sessionId);
             }
         } catch (error) {
             console.log("ocurrio un error al enviar al whatsapp",error);

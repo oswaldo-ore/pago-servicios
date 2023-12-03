@@ -11,6 +11,8 @@ const {
     sequelize
 } = require('../models');
 const { Op } = require('sequelize');
+const ConfiguracionRepository = require('./configuracion.repository');
+const configuracionRepository = new ConfiguracionRepository();
 nombresMeses = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
@@ -113,7 +115,10 @@ class DetalleUsuarioFacturaRepository {
             try {
                 if(usuario.cod_pais!="" && usuario.telefono != ""){
                     let number = usuario.cod_pais+usuario.telefono;
-                    apiWhatsappWeb.enviarMensajeTexto(number,message);
+                    let configuracion = await configuracionRepository.getConfiguracion();
+                    if(configuracion.estado_conexion){
+                        await apiWhatsappWeb.enviarMensajeTexto(number,message,configuracion.insta);
+                    }
                 }
             } catch (error) {
                 console.log("ocurrio un error " + error);

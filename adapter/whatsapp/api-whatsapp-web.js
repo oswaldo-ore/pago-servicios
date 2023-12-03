@@ -21,7 +21,6 @@ class ApiWhatsappWeb extends ApiWhatsapp {
         let url = `${this.URL}/session/start/${sessionId}`;
         try {
             let response = await axios.get(url);
-            console.log(response);
             if (response.data.error) {
                 throw response.data.error;
             }
@@ -202,6 +201,27 @@ class ApiWhatsappWeb extends ApiWhatsapp {
             const response = await axios.post(url,data);
             this.RESPONSE.state = true;
             this.RESPONSE.message = "Mensaje enviado correctamente";
+            return this.RESPONSE;
+        } catch (error) {
+            console.log("Ocurio un error :" +error);
+            if (error.response.data.error) {
+                this.RESPONSE.state = false;
+                this.RESPONSE.message = error.response.data.error;
+            } else {
+                this.RESPONSE.state = false;
+                this.RESPONSE.message = "Ocurrio un error al conectarse al servidor";
+            }
+            return this.RESPONSE;
+        }
+    }
+
+    async getClientInfo( sessionId = this.INSTANCEID){
+        const url = `${this.URL}/client/getClassInfo/${sessionId}`;
+        try {
+            const response = await axios.get(url);
+            this.RESPONSE.state = response.data.success;
+            this.RESPONSE.message = "Mensaje enviado correctamente";
+            this.RESPONSE.data = response.data.sessionInfo;
             return this.RESPONSE;
         } catch (error) {
             console.log("Ocurio un error :" +error);
