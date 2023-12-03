@@ -23,7 +23,7 @@ class ApiWhatsapp {
   async terminateAllSessions() {
   }
 
-  async enviarMensajeTexto(sessionId, number, message) {
+  async enviarMensajeTexto(number, message,sessionId) {
   }
 }
 module.exports = ApiWhatsapp;

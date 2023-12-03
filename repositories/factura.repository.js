@@ -292,9 +292,9 @@ class FacturaRepository {
                     let number = usuario.cod_pais + usuario.telefono;
                     if(factura.foto_factura != ""){
                         let fotoFacturaUrl = "https://servicios.tecnosoft.website" + factura.foto_factura;
-                        await apiWhatsappWeb.enviarMensajeFileForUrl(sessionId,number,fotoFacturaUrl);
+                        await apiWhatsappWeb.enviarMensajeFileForUrl(number,fotoFacturaUrl);
                     }
-                    await apiWhatsappWeb.enviarMensajeTexto(sessionId,number,mensaje.trim());
+                    await apiWhatsappWeb.enviarMensajeTexto(number,mensaje.trim());
                 }
             });
         } catch (error) {
@@ -317,7 +317,7 @@ class FacturaRepository {
                     message+=`*Saldo debe:* ${(detalle.monto - detalle.monto_pago).toFixed(2)}\r\n`;
                 }
                 let number= detalle.Usuario.cod_pais+detalle.Usuario.telefono;
-                await apiWhatsappWeb.enviarMensajeTexto(sessionId,number,message);
+                await apiWhatsappWeb.enviarMensajeTexto(number,message);
             }
         } catch (error) {
             console.log("ocurrio un error al enviar al whatsapp",error);

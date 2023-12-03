@@ -27,11 +27,11 @@ class TareaProgramada {
                     let deudaMensualRepository = new DeudaMensualRepository();
                     await deudaMensualRepository.crearDeudaDelUsuario(today);
                     today = moment().format('YYYY-MM-DD HH:mm');
-                    await apiWhatsappWeb.enviarMensajeTexto("12345","+59162008498",`Deudas mensuales creadas exitosamente.\r\n*${today}*`);
+                    await apiWhatsappWeb.enviarMensajeTexto("+59162008498",`Deudas mensuales creadas exitosamente.\r\n*${today}*`);
                 }
             } catch (error) {
                 let today = moment().format('YYYY-MM-DD HH:mm');
-                await apiWhatsappWeb.enviarMensajeTexto("12345","+59162008498", "Erro al crear deudas mensuales\r\n*"+today+"*\r\n"+error.message);
+                await apiWhatsappWeb.enviarMensajeTexto("+59162008498", "Erro al crear deudas mensuales\r\n*"+today+"*\r\n"+error.message);
             }
         });
 
@@ -39,7 +39,7 @@ class TareaProgramada {
         //     moment.locale('es');
         //     console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
         //     console.log("Tarea programada ejecutandose");
-        //     await apiWhatsappWeb.enviarMensajeTexto("12345","+59162008498", "Cada 5 min: horaSErvidor\r\n "+moment().format('YYYY-MM-DD HH:mm:ss'));
+        //     await apiWhatsappWeb.enviarMensajeTexto("+59162008498", "Cada 5 min: horaSErvidor\r\n "+moment().format('YYYY-MM-DD HH:mm:ss'));
         // });
     }
 

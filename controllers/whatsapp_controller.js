@@ -63,7 +63,7 @@ const WhatsappController = {
         let { sessionId="12345", number="59177809390",message="Hola" } = req.body;
         try {
             const facturaRepository = new FacturaRepository();
-            let response = await ApiWhatsappWeb.enviarMensajeTexto(sessionId,number,message);
+            let response = await ApiWhatsappWeb.enviarMensajeTexto(number,message);
             
             // let factura = await facturaRepository.enviarFacturaASuscriptores(5,sessionId);
             return res.json("holaclce");

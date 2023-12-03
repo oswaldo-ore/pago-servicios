@@ -113,7 +113,7 @@ class DetalleUsuarioFacturaRepository {
             try {
                 if(usuario.cod_pais!="" && usuario.telefono != ""){
                     let number = usuario.cod_pais+usuario.telefono;
-                    apiWhatsappWeb.enviarMensajeTexto("12345",number,message);
+                    apiWhatsappWeb.enviarMensajeTexto(number,message);
                 }
             } catch (error) {
                 console.log("ocurrio un error " + error);
