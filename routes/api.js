@@ -17,10 +17,7 @@ const DeudaMensualController = require('../controllers/deuda_mensual_controller'
 const upload = multer({
     storage: multer.memoryStorage(),
 });
-router.get('/configuracion', ConfiguracionController.getConfiguracion);
-router.post('/configuracion/getCodigoQr', ConfiguracionController.generarCodigoQr);
-router.post('/configuracion/verificarQr', ConfiguracionController.verificarConexion);
-router.post('/configuracion/desconectar', ConfiguracionController.desconectarNroWhatsapp);
+
 router.post('/session/enviarmensaje', WhatsappController.enviarMensaje);
 router.post('/facturaactualizarfacturas', WhatsappController.actualizarFacturas);
 router.get('/test', UsuarioController.test);
@@ -69,7 +66,10 @@ router.post("/detalle/factura/pagar",FacturaController.pagarFactura);
 router.post("/detalle/factura/devolver",FacturaController.devolverPrestamoDelPago);
 
 router.get('/deudas-mensuales', DeudaMensualController.getAllDeudasMensuales);
-
+router.get('/configuracion', ConfiguracionController.getConfiguracion);
+router.post('/configuracion/getCodigoQr', ConfiguracionController.generarCodigoQr);
+router.post('/configuracion/verificarQr', ConfiguracionController.verificarConexion);
+router.post('/configuracion/desconectar', ConfiguracionController.desconectarNroWhatsapp);
 
 
 module.exports = router;
