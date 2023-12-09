@@ -25,18 +25,19 @@ class SuscripcionRepository {
       data: suscripciones,
     };
   }
-  async crearSuscripcion(usuarioid, servicioid, tipo, monto, tiene_medidor) {
+  async crearSuscripcion(usuarioid, servicioid, tipo, monto, tiene_medidor,fecha_deuda) {
     const suscripcion = await Suscripcion.create({
       usuarioid,
       servicioid,
       tipo,
       monto,
       tiene_medidor,
+      fecha_deuda
     });
     return suscripcion;
   }
 
-  async actualizarSuscripcion(id, usuarioid, servicioid, tipo, monto, tiene_medidor) {
+  async actualizarSuscripcion(id, usuarioid, servicioid, tipo, monto, tiene_medidor,fecha_deuda) {
     const suscripcion = await Suscripcion.findByPk(id);
     if (!suscripcion) {
       throw new Error('Suscripción no encontrada');
@@ -46,6 +47,7 @@ class SuscripcionRepository {
     suscripcion.tipo = tipo;
     suscripcion.monto = monto;
     suscripcion.tiene_medidor = tiene_medidor;
+    suscripcion.fecha_deuda = fecha_deuda;
     await suscripcion.save();
     return suscripcion;
   }

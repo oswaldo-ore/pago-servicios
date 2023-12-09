@@ -16,14 +16,15 @@ const SuscripcionController = {
   },
   async crearSuscripcion(req, res) {
     try {
-      const { usuarioid, servicioid, tipo, monto, tiene_medidor } = req.body;
+      const { usuarioid, servicioid, tipo, monto, tiene_medidor,fecha_deuda = null } = req.body;
 
       const suscripcion = await suscripcionRepository.crearSuscripcion(
         usuarioid,
         servicioid,
         tipo,
         monto,
-        tiene_medidor
+        tiene_medidor,
+        fecha_deuda
       );
 
       return res.status(201).json(ResponseHelper.success(suscripcion, ResponseHelper.created('suscripción')));
@@ -36,7 +37,7 @@ const SuscripcionController = {
   async actualizarSuscripcion(req, res) {
     try {
       const { id } = req.params;
-      const { usuarioid, servicioid, tipo, monto, tiene_medidor } = req.body;
+      const { usuarioid, servicioid, tipo, monto, tiene_medidor,fecha_deuda = null } = req.body;
 
       const suscripcion = await suscripcionRepository.actualizarSuscripcion(
         id,
@@ -44,7 +45,8 @@ const SuscripcionController = {
         servicioid,
         tipo,
         monto,
-        tiene_medidor
+        tiene_medidor,
+        fecha_deuda
       );
 
       return res.json(ResponseHelper.success(suscripcion, ResponseHelper.updated('suscripción')));

@@ -48,6 +48,11 @@ module.exports = (sequelize, DataTypes) => {
                     key: 'id',
                 },
             },
+            fecha_deuda: {
+                type: DataTypes.DATE,
+                allowNull: true,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            },
             servicioid: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
