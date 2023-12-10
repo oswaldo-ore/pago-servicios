@@ -148,7 +148,10 @@ class DetalleUsuarioFacturaRepository {
             where: {
                 usuarioid: usuarioId,
                 estado: DetalleUsuarioFactura.COMPLETADO
-            }
+            },
+            order:[
+                [ "createdAt","DESC" ]
+            ]
         });
         return detallesPagados;
     }
