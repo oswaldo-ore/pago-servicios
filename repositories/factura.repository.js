@@ -297,7 +297,7 @@ class FacturaRepository {
                 if(usuario.cod_pais != "" && usuario.telefono != ""){
                     let number = usuario.cod_pais + usuario.telefono;
                     if(factura.foto_factura != ""){
-                        let fotoFacturaUrl = "https://servicios.tecnosoft.website" + factura.foto_factura;
+                        let fotoFacturaUrl = "https://servicios.tecnosoft.xyz" + factura.foto_factura;
                         await apiWhatsappWeb.enviarMensajeFileForUrl(number,fotoFacturaUrl,sessionId);
                     }
                     await apiWhatsappWeb.enviarMensajeTexto(number,mensaje.trim(),sessionId);
