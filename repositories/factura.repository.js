@@ -324,6 +324,7 @@ class FacturaRepository {
                     message+=`*Saldo debe:* ${(detalle.monto - detalle.monto_pago).toFixed(2)}\r\n`;
                 }
                 let number= detalle.Usuario.cod_pais+detalle.Usuario.telefono;
+                console.log("************",number);
                 await apiWhatsappWeb.enviarMensajeTexto(number,message,sessionId);
             }
         } catch (error) {

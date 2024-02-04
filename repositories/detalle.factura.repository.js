@@ -223,7 +223,7 @@ class DetalleUsuarioFacturaRepository {
                 mensaje += `*Monto:* Bs. ${detalle.monto}\r\n\r\n`;
                 if(configuracion.estado_conexion){
                     let number = user.cod_pais + user.telefono;
-                    await apiWhatsappWeb.enviarMensajeTexto(number,message,configuracion.insta);
+                    await apiWhatsappWeb.enviarMensajeTexto(number,mensaje,configuracion.insta);
                 }
                 console.log("Se esta creando la deuda");
             }else{

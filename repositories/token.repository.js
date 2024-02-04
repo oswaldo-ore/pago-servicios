@@ -22,7 +22,7 @@ class TokenRepository {
 
   static async checkTokenExpiration(token) {
     try {
-      console.log("Este es el token "+token);
+      // console.log("Este es el token "+token);
       const tokenInstance = await Token.findOne({
         where: {
           token: token
