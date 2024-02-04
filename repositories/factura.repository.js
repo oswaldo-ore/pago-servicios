@@ -102,7 +102,7 @@ class FacturaRepository {
                 cambio= monto - detalle.monto;
                 detalle.estado = DetalleUsuarioFactura.COMPLETADO;
             }
-            
+
             detalle.monto_pago = parseFloat(monto.toFixed(2));
             detalle.cambio_pago = parseFloat(cambio.toFixed(2));
             detalle.fecha_pago = fechaActual;
@@ -140,6 +140,7 @@ class FacturaRepository {
             return detalle;
         } catch (error) {
             await transaction.rollback();
+            console.log(error);
             throw new Error(error);
         }
     }

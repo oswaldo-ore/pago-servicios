@@ -177,7 +177,7 @@ class ApiWhatsappWeb extends ApiWhatsapp {
             return this.RESPONSE;
         } catch (error) {
             console.log("Ocurio un error :" +error);
-            if (error.response.data.error) {
+            if (error.response.data) {
                 this.RESPONSE.state = false;
                 this.RESPONSE.message = error.response.data.error;
             } else {

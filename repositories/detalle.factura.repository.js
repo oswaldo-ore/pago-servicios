@@ -12,6 +12,7 @@ const {
 } = require('../models');
 const { Op } = require('sequelize');
 const ConfiguracionRepository = require('./configuracion.repository');
+const SuscripcionRepository = require('./suscripcion.repository');
 const configuracionRepository = new ConfiguracionRepository();
 nombresMeses = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -183,6 +184,52 @@ class DetalleUsuarioFacturaRepository {
             ]
         });
         return detallesPrestadosNoCancelados;
+    }
+
+    static async existsDeudaWithUserServiceAndDate(usuarioId,servicioId,fecha){
+        console.log(fecha);
+        return await DetalleUsuarioFactura.findOne({
+            where:{
+                servicioid: servicioId,
+                usuarioid: usuarioId,
+                fecha: {
+                    [Op.startsWith]: fecha,
+                }
+            },
+        });
+    }
+    static async createAutomaticDebts(){
+        let date = moment();
+        let day = date.date();
+        let userWithSubscriptionAutomatic = await SuscripcionRepository.getUserWithSubscriptionAutomatic(day);
+        let configuracion = await configuracionRepository.getConfiguracion();
+        for (let index = 0; index < userWithSubscriptionAutomatic.length; index++) {
+            const subscription = userWithSubscriptionAutomatic[index]; //suscripcion
+            const user = subscription.Usuario;
+            let date = moment().format('YYYY-MM-DD');
+            let date2 = moment().format('DD-MM-YYYY');
+            const exitsDeuda = await this.existsDeudaWithUserServiceAndDate(subscription.usuarioid,subscription.servicioid,date);
+            if(!exitsDeuda){
+                let detalle = await DetalleUsuarioFactura.create({
+                    servicioid: subscription.servicioid,
+                    usuarioid: subscription.usuarioid,
+                    facturaid: null,
+                    monto: parseFloat(subscription.monto.toFixed(2)),
+                    fecha: date,
+                });
+                let mensaje = `Se ha registrado una nueva deuda.`;
+                mensaje += `*Deuda:*${date2}\r\n`;
+                mensaje += `*Servicio:* ${subscription.Servicio.nombre}\r\n`;
+                mensaje += `*Monto:* Bs. ${detalle.monto}\r\n\r\n`;
+                if(configuracion.estado_conexion){
+                    let number = user.cod_pais + user.telefono;
+                    await apiWhatsappWeb.enviarMensajeTexto(number,message,configuracion.insta);
+                }
+                console.log("Se esta creando la deuda");
+            }else{
+                console.log("Ya existe la deuda");
+            }
+        }
     }
 
 }

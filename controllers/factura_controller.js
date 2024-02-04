@@ -52,9 +52,13 @@ const FacturaController = {
     try {
       const { monto, detalle_factura_id, isprestado } = req.body;
       const detalle = await facturaRepository.registrarDetalleFactura(parseFloat(monto), detalle_factura_id,isprestado);
-      await facturaRepository.verificarSiLaFacturaPagada(detalle.facturaid);
+      console.log(detalle);
+      if(detalle.facturaid != null ){
+        await facturaRepository.verificarSiLaFacturaPagada(detalle.facturaid);
+      }
       return res.json(ResponseHelper.success(detalle, "El pago fue registrado correctamente."));
     } catch (error) {
+      console.log(error);
       return res.json(ResponseHelper.error('Error al registrar el pago' + error));
     }
   },
