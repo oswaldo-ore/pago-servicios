@@ -1,24 +1,25 @@
 {
   "development": {
-    "username": "root",
+    "username": "",
     "password": "",
-    "database": "pago-servicio",
-    "host": "127.0.0.1",
+    "database": "",
+    "host": "",
     "dialect": "mysql",
     "logging": false
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "username": "",
+    "password": "",
+    "database": "",
+    "host": "",
+    "dialect": "mysql",
+    "logging": false
   },
   "production": {
-    "username": "tecnywcy_oswaldo",
-    "password": "lunitabb3",
-    "database": "tecnywcy_pago-servicio",
-    "host": "127.0.0.1",
+    "username": "",
+    "password": "",
+    "database": "",
+    "host": "",
     "dialect": "mysql"
   }
 }
