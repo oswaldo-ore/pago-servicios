@@ -20,12 +20,12 @@ class TareaProgramada {
             DetalleUsuarioFacturaRepository.createAutomaticDebts();
         });
 
-        // this.prueba = scheduleJob({ rule: '*/2 * * * *', tz: this.timeZone },async ()=>{
-        //     moment.locale('es');
-        //     console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
-        //     console.log("Tarea programada ejecutandose");
-        //     await apiWhatsappWeb.enviarMensajeTexto("+59162008498", "Cada 5 min: horaSErvidor\r\n "+moment().format('YYYY-MM-DD HH:mm:ss'));
-        // });
+        this.prueba = scheduleJob({ rule: '*/2 * * * *', tz: this.timeZone },async ()=>{
+            moment.locale('es');
+            console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
+            console.log("Tarea programada ejecutandose");
+            await apiWhatsappWeb.enviarMensajeTexto("+59162008498", "Cada 5 min: horaSErvidor\r\n "+moment().format('YYYY-MM-DD HH:mm:ss'));
+        });
     }
 
     iniciarTareas() {
@@ -36,10 +36,7 @@ class TareaProgramada {
     }
 
     detenerTareas() {
-        
     }
-
-    
 }
 
 module.exports = TareaProgramada;
