@@ -2,6 +2,8 @@ const { scheduleJob } = require('node-schedule');
 const NotifyToUser = require('./schedule/notify-to-user');
 const CreateDeudaMensual = require('./schedule/create-deuda-mensual');
 const DetalleUsuarioFacturaRepository = require('../repositories/detalle.factura.repository');
+const moment =  require('moment');
+const apiWhatsappWeb = require('../adapter/whatsapp/api-whatsapp-web');
 class TareaProgramada {
     zonaHorariaBolivia = 'America/La_Paz';
     constructor() {

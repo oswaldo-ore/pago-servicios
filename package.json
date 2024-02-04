@@ -5,7 +5,11 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev:watch": "set NODE_ENV=development && nodemon start",
-    "prod:watch": "set NODE_ENV=production && nodemon start"
+    "prod:watch": "set NODE_ENV=production && nodemon start",
+    "dev:migrate": "npx sequelize-cli db:migrate --env development --config config/config.js",
+    "dev:migrate:undo": "npx sequelize-cli db:migrate:undo --env development --config config/config.js",
+    "prod:migrate": "npx sequelize-cli db:migrate --env production --config config/config.js",
+    "prod:migrate:undo": "npx sequelize-cli db:migrate:undo --env production --config config/config.js"
   },
   "dependencies": {
     "axios": "^1.6.0",

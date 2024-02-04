@@ -2,13 +2,15 @@
 
 const fs = require('fs');
 const path = require('path');
+const dotEnv = require('dotenv').config();
 const Sequelize = require('sequelize');
 const process = require('process');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-const { getConfig } = require('../config/config');
+const config = require('../config/config')[env.trim()];
 // const config = require(__dirname + '/../config/config.json')[env];
-const config = getConfig(env);
+// const config = getConfig(env);
+console.log("**********************",config);
 const db = {};
 
 let sequelize;
