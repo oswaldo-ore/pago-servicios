@@ -1,4 +1,4 @@
-const { Admin } = require('../models');
+const { Admin, Configuracion } = require('../models');
 const { Op } = require('sequelize');
 const { sequelize } = require('../models');
 
@@ -16,8 +16,34 @@ class AdminRepository {
           return admin;
     }
 
-    async findUserByCorreo(correo) {
-        return admin.find(user => user.email === correo);
+    static async findUserByCorreo(correo) {
+        return Admin.findOne({
+            where: {
+                email: correo
+            },
+            include: [
+                {
+                    model: Configuracion,
+                    required: true
+                }
+            ]
+        });
+    }
+
+    static async getUserAndSettingByUserAndPassVeripago(username, password) {
+        console.log(username, password);
+        return await Admin.findOne({
+            include:[
+                {
+                    model: Configuracion,
+                    required: true,
+                    where:{
+                        veripagos_username: username,
+                        veripagos_password: password,
+                    }
+                }
+            ]
+        });
     }
 }
 

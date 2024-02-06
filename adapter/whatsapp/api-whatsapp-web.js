@@ -169,7 +169,7 @@ class ApiWhatsappWeb extends ApiWhatsapp {
             const data = {
                 chatId: number,
                 contentType: "string",
-                content: message
+                content: message,
             }
             const response = await axios.post(url,data);
             this.RESPONSE.state = true;
@@ -186,6 +186,83 @@ class ApiWhatsappWeb extends ApiWhatsapp {
             }
             return this.RESPONSE;
         }
+    }
+    async enviarMensajeTextoWithFile(number, message,sessionId = this.INSTANCEID,file,filename="Qr.png",mimetype="image/png",){
+        if(validatePhoneNumber.validate(number)){
+            number = number.replace(/\+/g, '') + "@c.us";
+        }
+        const url = `${this.URL}/client/sendMessage/${sessionId}`;
+        try {
+            const data = {
+                chatId: number,
+                contentType: "string",
+                content: message,
+                options: file ? {
+                    media:{
+                        mimetype:  mimetype,
+                        data: file,
+                        filename: filename,
+                    }
+                }:null
+            }
+            const response = await axios.post(url,data);
+            this.RESPONSE.state = true;
+            this.RESPONSE.message = "Mensaje enviado correctamente";
+            return this.RESPONSE;
+        } catch (error) {
+            console.log("Ocurio un error :" +error);
+            if (error.response.data) {
+                this.RESPONSE.state = false;
+                this.RESPONSE.message = error.response.data.error;
+            } else {
+                this.RESPONSE.state = false;
+                this.RESPONSE.message = "Ocurrio un error al conectarse al servidor";
+            }
+            return this.RESPONSE;
+        }
+    }
+
+    // {
+    //     "chatId": "6281288888888@c.us",
+    //     "contentType": "MessageMedia",
+    //     "content": {
+    //       "mimetype": "image/jpeg",
+    //       "data": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+    //       "filename": "image.jpg"
+    //     }
+    //   }
+
+    async enviarMensajeFile(number,file,filename="Qr.png", sessionId = this.INSTANCEID){
+        if(validatePhoneNumber.validate(number)){
+            number = number.replace(/\+/g, '') + "@c.us";
+        }
+        const url = `${this.URL}/client/sendMessage/${sessionId}`;
+        try {
+            const data = {
+                chatId: number,
+                contentType: "MessageMedia",
+                content: {
+                    mimetype:  "image/png",
+                    data: file,
+                    filename: filename,
+                }
+            }
+            const response = await axios.post(url,data);
+            this.RESPONSE.state = true;
+            this.RESPONSE.message = "Mensaje enviado correctamente";
+            return this.RESPONSE;
+        } catch (error) {
+            console.log("Ocurio un error :" +error);
+            if (error.response.data.error) {
+                this.RESPONSE.state = false;
+                this.RESPONSE.message = error.response.data.error;
+            } else {
+                this.RESPONSE.state = false;
+                this.RESPONSE.message = "Ocurrio un error al conectarse al servidor";
+            }
+            return this.RESPONSE;
+        }
+
     }
     async enviarMensajeFileForUrl(number, urlFile, sessionId = this.INSTANCEID){
         if(validatePhoneNumber.validate(number)){

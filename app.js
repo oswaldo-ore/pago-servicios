@@ -24,6 +24,7 @@ app.use(cors({
   origin:[
     'https://pagoservicios.tecnosoft.xyz',
     'http://localhost:4200',
+    'https://veripagos.com'
   ] , // Permitir solicitudes desde tu aplicación Angular
   credentials: true // Si estás manejando cookies u otras credenciales
 }));

@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     static SECRET_KEY = "PAGO_SERVICIO_OSWALDO";
     static associate(models) {
       Admin.hasMany(models.Token, { foreignKey: 'user_id' });
+      Admin.hasOne(models.Configuracion, { foreignKey: 'admin_id' });
     }
   }
   Admin.init({

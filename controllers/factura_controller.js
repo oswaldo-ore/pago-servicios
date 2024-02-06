@@ -1,4 +1,5 @@
 const FacturaRepository = require('../repositories/factura.repository');
+const VeripagosInstanceRepository = require('../repositories/veripagos-instance.repository');
 const ResponseHelper = require('../utils/helper_response');
 const facturaRepository = new FacturaRepository();
 
@@ -71,6 +72,50 @@ const FacturaController = {
       return res.json(ResponseHelper.success(detalle, "La devolucion del pago fue registrado correctamente."));
     } catch (error) {
       return res.json(ResponseHelper.error('Error al registrar la devolucion' + error));
+    }
+  },
+  /*
+    {
+      "movimiento_id": 23066,
+      "monto": 20,
+      "detalle":"Codigo de pago 23066",
+      "estado":"Completado",
+      "data":[
+          {
+              "orderId": 5455,
+              "description":"Recarga de la billetera: VeriPagos",
+              "subscriptionId":null,
+              "ProductsDetail":[
+                  {
+                      "ProductId": 14,
+                      "Quantity": 1,
+                      "UnitPrice": 20
+                  }
+              ]
+          }
+      ]
+  }
+  */
+  async webhookVeripagos(req,res){
+    let {movimiento_id, monto,detalle,estado, data} = req.body
+    try {
+      let veripagos = await VeripagosInstanceRepository.getVeripagosInstanceByMovimientoId(movimiento_id);
+      console.log(veripagos);
+      if(veripagos && veripagos.completado_en == null){
+        let deudas = veripagos.DetalleVeripagos;
+        for (let index = 0; index < deudas.length; index++) {
+          const deuda = deudas[index];
+          const detalle = await facturaRepository.registrarDetalleFactura(parseFloat(deuda.monto), deuda.deuda_usuario_factura_id,false );
+          if(detalle.facturaid != null ){
+            await facturaRepository.verificarSiLaFacturaPagada(detalle.facturaid);
+          }
+        }
+        veripagos.estado = estado;
+        await veripagos.save();
+      }
+      return res.json(ResponseHelper.success(veripagos, "El pago fue registrado correctamente."));
+    } catch (error) {
+      return res.json(ResponseHelper.error('Error al registrar el pago'));
     }
   }
 };

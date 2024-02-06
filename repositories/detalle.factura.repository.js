@@ -231,7 +231,9 @@ class DetalleUsuarioFacturaRepository {
             }
         }
     }
-
+    async getDetalleUsuarioFacturaById(detalleUsuarioFacturaId) {
+        return await DetalleUsuarioFactura.findByPk(detalleUsuarioFacturaId);
+    }
 }
 
 module.exports = DetalleUsuarioFacturaRepository;

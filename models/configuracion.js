@@ -33,6 +33,27 @@ module.exports = (sequelize, DataTypes) => {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      veripagos_secret_key: {
+        type: Sequelize.STRING,
+        defaultValue: "",
+      },
+      veripagos_username: {
+        type: Sequelize.STRING,
+        defaultValue: "",
+      },
+      veripagos_password: {
+        type: Sequelize.STRING,
+        defaultValue: "",
+      },
+      admin_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: {
+            tableName: "admins",
+          },
+          key: "id",
+        },
+      },
       estado_conexion: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,

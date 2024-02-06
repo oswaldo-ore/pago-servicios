@@ -14,6 +14,7 @@ const {
 const router = express.Router();
 const multer  = require('multer');
 const DeudaMensualController = require('../controllers/deuda_mensual_controller');
+const verificarAuthToVeripagos = require('../middleware/veripagos.middleware');
 const upload = multer({
     storage: multer.memoryStorage(),
 });
@@ -24,7 +25,7 @@ router.get('/test', UsuarioController.test);
 router.post('/test2', DeudaMensualController.generarDeudaMensuales);
 router.get('/test3', DeudaMensualController.getAllDeudasMensuales);
 router.post('/admin/login',LoginController.loginAdmin);
-
+router.post('/webhook-veripagos',verificarAuthToVeripagos,FacturaController.webhookVeripagos)
 router.use(jwtMiddleware);
 router.post('/admin/logout',LoginController.logoutAdmin);
 router.get('/usuarios/listar', UsuarioController.listarUsuarios);
@@ -66,10 +67,10 @@ router.post("/detalle/factura/pagar",FacturaController.pagarFactura);
 router.post("/detalle/factura/devolver",FacturaController.devolverPrestamoDelPago);
 
 router.get('/deudas-mensuales', DeudaMensualController.getAllDeudasMensuales);
-router.get('/configuracion', ConfiguracionController.getConfiguracion);
-router.post('/configuracion/getCodigoQr', ConfiguracionController.generarCodigoQr);
-router.post('/configuracion/verificarQr', ConfiguracionController.verificarConexion);
-router.post('/configuracion/desconectar', ConfiguracionController.desconectarNroWhatsapp);
-
+router.get('/configuracion', ConfiguracionController.getConfiguracionV2);
+router.post('/configuracion/getCodigoQr', ConfiguracionController.generarCodigoQrV2);
+router.patch('/configuracion/updateVeripagos', ConfiguracionController.updateVeripagosConfiguracion);
+router.post('/configuracion/verificarQr', ConfiguracionController.verificarConexionV2);
+router.post('/configuracion/desconectar', ConfiguracionController.desconectarNroWhatsappV2);
 
 module.exports = router;
