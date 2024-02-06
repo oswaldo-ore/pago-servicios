@@ -5,10 +5,12 @@ const configuracionRepository = new ConfiguracionRepository();
 class NotifyToUser{
     static async ejecutarNotificaciones() {
         const usuarioRepository = new UsuarioRepository();
-        let configuracion = await configuracionRepository.getConfiguracion();
-        if(configuracion.estado_conexion){
-            await usuarioRepository.notificarPorWhatsappLasDeudasPendientes(configuracion.instancia_id);
-        }
+        // let configuracion = await configuracionRepository.getConfiguracion();
+        // if(configuracion.estado_conexion){
+        //     await usuarioRepository.notificarPorWhatsappLasDeudasPendientes(configuracion.instancia_id);
+        // }
+        await usuarioRepository.notificarPorWhatsappLasDeudasPendientes();
+
     }
 }
 module.exports = NotifyToUser;

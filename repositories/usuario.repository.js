@@ -296,6 +296,11 @@ class UsuarioRepository {
     return await Usuario.findAll({
       include: [
         {
+          model: Configuracion,
+          as:"Configuracion",
+          required: true,
+        },
+        {
           model: DetalleUsuarioFactura,
           as: "DetalleUsuarioFactura",
           include:[
@@ -317,10 +322,11 @@ class UsuarioRepository {
     });
   }
 
-  async notificarPorWhatsappLasDeudasPendientes(instanciaId){
+  async notificarPorWhatsappLasDeudasPendientes(){
     let users = await this.getUserConFacturasNoPagadas();
     for (let index = 0; index < users.length; index++) {
       const user = users[index]; 
+      const config = user.Configuracion;
       if(user.cod_pais != "" && user.telefono != ""){
         let message = user.nombre+" " + user.apellidos+"\r\n";
         message += "*Tienes deudas pendientes.*"+"\r\n\r\n";
@@ -336,7 +342,9 @@ class UsuarioRepository {
             montoTotal += saldo < 0 ? 0: saldo;
         });
         message+= `*Monto Total Debe: Bs. ${montoTotal.toFixed(2)}*`;
-        await apiWhatsappWeb.enviarMensajeTexto(user.cod_pais+user.telefono,message,instanciaId);
+        if(config.estado_conexion){
+          await apiWhatsappWeb.enviarMensajeTexto(user.cod_pais+user.telefono,message,config.instancia_id);
+        }
       }
     }
   }
