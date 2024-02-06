@@ -1,6 +1,6 @@
 'use strict';
 const { Model } = require('sequelize');
-
+const moment = require('moment');
 module.exports = (sequelize, DataTypes) => {
     class DetalleUsuarioFactura extends Model {
         static PENDIENTE = 0;
@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
         toJSON() {
             return { ...this.get(), createdAt: undefined, updatedAt: undefined, deletedAt: undefined };
         }
+        getFechaFormateada() {
+            moment.locale('es'); // Configura el idioma a español
+            const formattedDate = moment(this.fecha).format('MMMM-YYYY');
+            const capitalizeFormattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+            return capitalizeFormattedDate;
+          }
     }
 
     DetalleUsuarioFactura.init(

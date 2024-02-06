@@ -1,4 +1,4 @@
-const { Usuario, Suscripcion, Servicio, Medidor,DetalleUsuarioFactura,Factura } = require('../models');
+const { Usuario, Suscripcion, Servicio, Medidor,DetalleUsuarioFactura,Factura ,Configuracion} = require('../models');
 const { Op } = require('sequelize');
 const { sequelize } = require('../models');
 const apiWhatsappWeb = require('../adapter/whatsapp/api-whatsapp-web');
@@ -300,10 +300,11 @@ class UsuarioRepository {
           include:[
             {
               model: Factura,
+              required:false,
             },
             {
               model: Servicio
-            }
+            },
           ],
           where:{
             [Op.or]: [
@@ -325,7 +326,7 @@ class UsuarioRepository {
         let montoTotal = 0;
         user.DetalleUsuarioFactura.forEach(detalle => {
             message+=`*Servicio:* ${detalle.Servicio.nombre}\r\n`;
-            message+=`*Fecha:* ${detalle.Factura.getFechaFormateada()}\r\n`;
+            message+=`*Fecha:* ${detalle.getFechaFormateada()}\r\n`;
             message+=`*Monto:* Bs. ${detalle.monto.toFixed(2)}\r\n`;
             message+=`*Pago:* Bs. ${detalle.monto_pago.toFixed(2)}\r\n`;
             message+=`*Debe:* Bs. ${(detalle.monto-detalle.monto_pago).toFixed(2)}\r\n`;

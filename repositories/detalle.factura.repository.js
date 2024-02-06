@@ -220,7 +220,7 @@ class DetalleUsuarioFacturaRepository {
                 let mensaje = `Se ha registrado una nueva deuda.`;
                 mensaje += `*Deuda:*${date2}\r\n`;
                 mensaje += `*Servicio:* ${subscription.Servicio.nombre}\r\n`;
-                mensaje += `*Monto:* Bs. ${detalle.monto}\r\n\r\n`;
+                mensaje += `*Monto:* Bs. ${detalle.monto}\r\n`;
                 if(configuracion.estado_conexion){
                     let number = user.cod_pais + user.telefono;
                     await apiWhatsappWeb.enviarMensajeTexto(number,mensaje,configuracion.insta);

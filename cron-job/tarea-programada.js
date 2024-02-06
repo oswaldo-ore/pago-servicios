@@ -16,7 +16,7 @@ class TareaProgramada {
         });
 
         this.tareaFinDeMes = scheduleJob({ rule: '0 9 28 * *', tz: this.timeZone }, () => {
-            NotifyToUser.ejecutarNotificaciones();
+            VeripagosDeudaFacturaService.crearVeripagosInstanceAndSendQrByManyDetalleUsuarioFactura();
         });
         this.crearDeudaMensuales = scheduleJob({ rule: '55 23 * * *', tz: this.timeZone },async () => {
             CreateDeudaMensual.handle();
@@ -26,11 +26,11 @@ class TareaProgramada {
             DetalleUsuarioFacturaRepository.createAutomaticDebts();
         });
 
-        this.prueba = scheduleJob({ rule: '* * * * *', tz: this.timeZone },async ()=>{
+        this.prueba = scheduleJob({ rule: '*/2 * * * *', tz: this.timeZone },async ()=>{
             moment.locale('es');
             console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
             console.log("Tarea programada ejecutandose");
-            // VeripagosDeudaFacturaService.crearVeripagosInstanceAndSendQrBySingleDetalleUsuarioFactura(68);
+            // VeripagosDeudaFacturaService.crearVeripagosInstanceAndSendQrByManyDetalleUsuarioFactura();
             // let setting = await configuracionRepository.getConfiguracionByAdminId(1);
             // let veripagosApi =  new VeripagosAPI(setting.veripagos_username, setting.veripagos_password, setting.veripagos_secret_key);
             // let result = await veripagosApi.generarQR(1, [], '1/00:00');
