@@ -217,7 +217,7 @@ class DetalleUsuarioFacturaRepository {
                     monto: parseFloat(subscription.monto.toFixed(2)),
                     fecha: date,
                 });
-                let mensaje = `Se ha registrado una nueva deuda.`;
+                let mensaje = `Se ha registrado una nueva deuda.\r\n`;
                 mensaje += `*Deuda:*${date2}\r\n`;
                 mensaje += `*Servicio:* ${subscription.Servicio.nombre}\r\n`;
                 mensaje += `*Monto:* Bs. ${detalle.monto}\r\n`;
