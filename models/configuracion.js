@@ -12,6 +12,9 @@ module.exports = (sequelize, DataTypes) => {
         instancia_id:undefined,
       };
     }
+    static associate(models) {
+      Configuracion.hasMany(models.Usuario, { as: 'Usuario', foreignKey: 'configuracion_id' });
+    }
   }
   Configuracion.init(
     {

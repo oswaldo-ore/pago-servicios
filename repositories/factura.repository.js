@@ -10,6 +10,7 @@ const { sequelize } = require('../models');
 const { Op } = require('sequelize');
 const SaveImage = require('../utils/save_images');
 const moment = require('moment');
+require('dotenv').config();
 const UsuarioRepository = require('./usuario.repository');
 const apiWhatsappWeb = require('../adapter/whatsapp/api-whatsapp-web');
 const ConfiguracionRepository = require('./configuracion.repository');
@@ -22,6 +23,7 @@ nombresMeses = [
 class FacturaRepository {
     constructor() {
         this.usuarioRepository = new UsuarioRepository();
+        this.url_image = "https://servicios.tecnosoft.xyz";
     }
 
     async listarFacturas(page = 1, limit = 8) {
@@ -80,7 +82,7 @@ class FacturaRepository {
         return factura;
     }
 
-    async registrarDetalleFactura(monto,detalleFacturaId,isPrestado){
+    async registrarDetalleFactura(monto,detalleFacturaId,isPrestado,user_admin = 1){
         const transaction = await sequelize.transaction();
         try {
             const fechaActual = new Date();
@@ -131,9 +133,7 @@ class FacturaRepository {
                 movimientoid: movimiento.id
             },{transaction});
             await transaction.commit();
-            let configuracion = await configuracionRepository.getConfiguracion();
-            console.log("--------------------------------------");
-            console.log(configuracion.estado_conexion);
+            let configuracion = await configuracionRepository.getConfiguracionByAdminId(user_admin);
             if(configuracion.estado_conexion){
                 this.enviarPagoDelServicioAlCliente(montoAnterior,descripcion,montoInicial,detalle,configuracion.instancia_id);
             }
@@ -188,7 +188,7 @@ class FacturaRepository {
         detalle.fecha_pago = new Date();
         await detalle.save();
     }
-    async crearFactura(monto, fecha, foto, servicioid) {
+    async crearFactura(monto, fecha, foto, servicioid,user_admin = 1) {
         const transaction = await sequelize.transaction();
         try {
             const fechaFormateada = moment(fecha).format('YYYY-MM');
@@ -269,7 +269,7 @@ class FacturaRepository {
                 detallesFactura.push(detalle);
             }
             await transaction.commit();
-            let configuracion = await configuracionRepository.getConfiguracion();
+            let configuracion = await configuracionRepository.getConfiguracionByAdminId(user_admin);
             if(configuracion.estado_conexion){
                 await this.enviarFacturaASuscriptores(factura.id,configuracion.instancia_id);
             }
@@ -298,7 +298,7 @@ class FacturaRepository {
                 if(usuario.cod_pais != "" && usuario.telefono != ""){
                     let number = usuario.cod_pais + usuario.telefono;
                     if(factura.foto_factura != ""){
-                        let fotoFacturaUrl = "https://servicios.tecnosoft.xyz" + factura.foto_factura;
+                        let fotoFacturaUrl = this.url_image + factura.foto_factura;
                         await apiWhatsappWeb.enviarMensajeFileForUrl(number,fotoFacturaUrl,sessionId);
                     }
                     await apiWhatsappWeb.enviarMensajeTexto(number,mensaje.trim(),sessionId);

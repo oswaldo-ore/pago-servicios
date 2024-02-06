@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       Usuario.hasMany(models.Medidor, { as: "Medidores", foreignKey: 'usuarioId' });
       Usuario.hasMany(models.Suscripcion, { as: 'Suscripciones', foreignKey: 'usuarioid' });
       Usuario.hasMany(models.DetalleUsuarioFactura, { as: 'DetalleUsuarioFactura', foreignKey: 'usuarioid' });
+      Usuario.belongsTo(models.Configuracion, { as: 'Configuracion', foreignKey: 'configuracion_id' });
       Usuario.belongsToMany(models.Servicio, {
         through: models.Suscripcion,
         foreignKey: 'usuarioid',
@@ -33,6 +34,12 @@ module.exports = (sequelize, DataTypes) => {
     cod_pais: DataTypes.STRING,
     telefono: DataTypes.STRING,
     estado: DataTypes.BOOLEAN,
+    configuracion_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 1,
+      references: { model: "configuraciones", key: "id" },
+    },
     a_cuenta:{
       type: DataTypes.DOUBLE,
       defaultValue: 0,

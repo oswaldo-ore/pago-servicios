@@ -198,6 +198,19 @@ class DetalleUsuarioFacturaRepository {
             },
         });
     }
+    static async existsDeudaWithUserServiceAndDateAndIsGenerateAutomatic(usuarioId,servicioId,fecha){
+        console.log(fecha);
+        return await DetalleUsuarioFactura.findOne({
+            where:{
+                servicioid: servicioId,
+                usuarioid: usuarioId,
+                fecha: {
+                    [Op.startsWith]: fecha,
+                },
+                es_deuda_generada: DetalleUsuarioFactura.GENERADO_AUTOMATICO,
+            },
+        });
+    }
     static async createAutomaticDebts(){
         let date = moment();
         let day = date.date();
@@ -208,17 +221,18 @@ class DetalleUsuarioFacturaRepository {
             const user = subscription.Usuario;
             let date = moment().format('YYYY-MM-DD');
             let date2 = moment().format('DD-MM-YYYY');
-            const exitsDeuda = await this.existsDeudaWithUserServiceAndDate(subscription.usuarioid,subscription.servicioid,date);
+            const exitsDeuda = await this.existsDeudaWithUserServiceAndDateAndIsGenerateAutomatic(subscription.usuarioid,subscription.servicioid,date);
             if(!exitsDeuda){
                 let detalle = await DetalleUsuarioFactura.create({
                     servicioid: subscription.servicioid,
                     usuarioid: subscription.usuarioid,
                     facturaid: null,
                     monto: parseFloat(subscription.monto.toFixed(2)),
+                    es_deuda_generada: DetalleUsuarioFactura.GENERADO_AUTOMATICO,
                     fecha: date,
                 });
                 let mensaje = `Se ha registrado una nueva deuda.\r\n`;
-                mensaje += `*Deuda:*${date2}\r\n`;
+                mensaje += `*Deuda:* ${date2}\r\n`;
                 mensaje += `*Servicio:* ${subscription.Servicio.nombre}\r\n`;
                 mensaje += `*Monto:* Bs. ${detalle.monto}\r\n`;
                 if(configuracion.estado_conexion){

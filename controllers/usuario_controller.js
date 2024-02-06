@@ -3,10 +3,12 @@ const DetalleUsuarioFacturaRepository = require('../repositories/detalle.factura
 const ResponseHelper = require('../utils/helper_response');
 const FacturaRepository = require('../repositories/factura.repository');
 const apiWhatsappWeb = require('../adapter/whatsapp/api-whatsapp-web');
+const ConfiguracionRepository = require('../repositories/configuracion.repository');
 
 const usuarioRepository = new UsuarioRepository();
 const detalleFactura = new DetalleUsuarioFacturaRepository();
 const facturaRepository = new FacturaRepository();
+let configuracionRepository = new ConfiguracionRepository();
 
 const UsuarioController = {
   async listarUsuarios(req, res) {
@@ -34,12 +36,13 @@ const UsuarioController = {
   async crearUsuario(req, res) {
     try {
       const { nombre, apellidos,cod_pais="",telefono="" } = req.body;
-
+      let configuracion = await configuracionRepository.getConfiguracionByAdminId(req.user.id);
       const usuario = await usuarioRepository.crearUsuario(
         nombre,
         apellidos,
         cod_pais,
-        telefono
+        telefono,
+        configuracion? configuracion.id : 1,
       );
       return res.status(201).json(ResponseHelper.success(usuario,ResponseHelper.created('usuario')));
     } catch (error) {

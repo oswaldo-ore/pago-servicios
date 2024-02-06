@@ -6,6 +6,8 @@ module.exports = (sequelize, DataTypes) => {
         static PENDIENTE = 0;
         static PRESTADO = 1;
         static COMPLETADO = 2;
+        static NO_GENERADO = 0;
+        static GENERADO_AUTOMATICO = 1;
         static associate(models) {
             DetalleUsuarioFactura.belongsTo(models.Servicio, { foreignKey: 'servicioid' });
             DetalleUsuarioFactura.belongsTo(models.Usuario, { foreignKey: 'usuarioid' });
@@ -37,6 +39,12 @@ module.exports = (sequelize, DataTypes) => {
             estado: DataTypes.TINYINT,
             monto_pago: DataTypes.DOUBLE,
             cambio_pago: DataTypes.DOUBLE,
+            es_deuda_generada:{
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: 0,
+                comment: "0 no es generado, 1 es generado",
+            },
             createdAt: {
                 type: DataTypes.DATE,
                 allowNull: false,

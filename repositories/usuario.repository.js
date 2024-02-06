@@ -79,13 +79,14 @@ class UsuarioRepository {
     };
   }
 
-  async crearUsuario(nombre, apellidos,cod_pais,telefono) {
+  async crearUsuario(nombre, apellidos,cod_pais,telefono, configuracion_id ) {
     const usuario = await Usuario.create({
       nombre,
       apellidos,
       cod_pais,
       telefono,
       estado: true,
+      configuracion_id: configuracion_id,
     });
     return usuario;
   }
