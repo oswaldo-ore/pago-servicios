@@ -141,7 +141,6 @@ class ConfiguracionRepository {
             veripagos_password: "",
             admin_id: admin_id
         },{transaction:transaction});
-        await apiWhatsapp.startSession(codeWhatsapp);
         return configuracion;
     }
 
