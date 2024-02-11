@@ -15,6 +15,7 @@ const router = express.Router();
 const multer  = require('multer');
 const DeudaMensualController = require('../controllers/deuda_mensual_controller');
 const verificarAuthToVeripagos = require('../middleware/veripagos.middleware');
+const AdminController = require('../controllers/admin_controller');
 const upload = multer({
     storage: multer.memoryStorage(),
 });
@@ -24,8 +25,10 @@ router.post('/facturaactualizarfacturas', WhatsappController.actualizarFacturas)
 router.get('/test', UsuarioController.test);
 router.post('/test2', DeudaMensualController.generarDeudaMensuales);
 router.get('/test3', DeudaMensualController.getAllDeudasMensuales);
-router.post('/admin/login',LoginController.loginAdmin);
+router.post('/user/create',AdminController.createNewUser);
+router.post('/close/all-session',WhatsappController.closeAllSession);
 router.post('/webhook-veripagos',verificarAuthToVeripagos,FacturaController.webhookVeripagos)
+router.post('/admin/login',LoginController.loginAdmin);
 router.use(jwtMiddleware);
 router.post('/admin/logout',LoginController.logoutAdmin);
 router.get('/usuarios/listar', UsuarioController.listarUsuarios);

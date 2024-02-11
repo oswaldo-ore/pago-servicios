@@ -3,10 +3,17 @@ const { Op } = require('sequelize');
 const { sequelize } = require('../models');
 const {Configuracion} = require('../models');
 const apiWhatsapp = require('../adapter/whatsapp/api-whatsapp-web');
-const { customAlphabet } = require('nanoid');
+const nonoid = require('nanoid');
+const moment = require('moment');
 
 class ConfiguracionRepository {
     alphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    static SESSION_NOT_CONNECTED = "session_not_connected";
+    static SESSION_NOT_FOUND = "session_not_found";
+    //session_connected
+    static SESSION_CONNECTED = "session_connected";
+    static QR_CODE_NOT_READY = "qr code not ready or already scanned";
+
     async getConfiguracion() {
         let sessionState = await apiWhatsapp.getSessionStatus();
         let configuracion = await Configuracion.findOne();
@@ -20,7 +27,7 @@ class ConfiguracionRepository {
             });
             await apiWhatsapp.startSession();
         }
-        if(!sessionState.state){
+        if(sessionState.message != ConfiguracionRepository.SESSION_CONNECTED){
             configuracion.codigo_pais = "";
             configuracion.numero_telefono = "";
             configuracion.estado_conexion = false;
@@ -36,7 +43,7 @@ class ConfiguracionRepository {
             }
         });
         let sessionState = await apiWhatsapp.getSessionStatus(configuracion.instancia_id);
-        if(!sessionState.state){
+        if(sessionState.message != ConfiguracionRepository.SESSION_CONNECTED ){
             configuracion.estado_conexion = false;
             await configuracion.save();
         }
@@ -50,10 +57,19 @@ class ConfiguracionRepository {
     }
     async generarCodigoQrByAdminId(admin_id){
         let configuracion = await this.getConfiguracionByAdminId(admin_id);
+        if(!configuracion.state){
+            await apiWhatsapp.startSession(configuracion.instancia_id);
+        }
         let session = await apiWhatsapp.getSessionStatus(configuracion.instancia_id);
-        // let configuracion = await this.getConfiguracion();
-        if(session.state && configuracion.numero_telefono != "")  throw new Error("Tienes una session activa");
-        return await apiWhatsapp.getQrCode(configuracion.instancia_id);
+        let response = null;
+        if(session.message == ConfiguracionRepository.SESSION_NOT_CONNECTED){
+            response = await apiWhatsapp.getQrCode(configuracion.instancia_id);
+            while (response.message == ConfiguracionRepository.QR_CODE_NOT_READY) {
+                await new Promise(resolve => setTimeout(resolve,1000));
+                response = await apiWhatsapp.getQrCode(configuracion.instancia_id);
+            }
+        }
+        return response;
     }
     async verificarConexionQr(){
         let client = await apiWhatsapp.getClientInfo();
@@ -63,7 +79,6 @@ class ConfiguracionRepository {
             if(!client.state) throw new Error("No se pudo conectar!");
             client = await apiWhatsapp.getClientInfo();
         }
-        console.log(client);
         let numero = client.data.me.user;
         numero = numero.replace("591","");
         configuracion.codigo_pais = "591";
@@ -75,14 +90,12 @@ class ConfiguracionRepository {
 
     async verificarConexionQrByAdminId(admin_id){
         let configuracion = await this.getConfiguracionByAdminId(admin_id);
-        console.log(configuracion);
         let client = await apiWhatsapp.getClientInfo(configuracion.instancia_id);
         if(!client.state) throw new Error("No se pudo conectar!");
         while (!client.data) {
             if(!client.state) throw new Error("No se pudo conectar!");
             client = await apiWhatsapp.getClientInfo(configuracion.instancia_id);
         }
-        console.log(client);
         let numero = client.data.me.user;
         numero = numero.replace("591","");
         configuracion.codigo_pais = "591";
@@ -111,16 +124,13 @@ class ConfiguracionRepository {
         let teminate = await apiWhatsapp.terminateSession(configuracion.instancia_id);
         if(!teminate.state)
             throw new Error("No se pudo desconectar, intente nuevamente.");
-        // configuracion.codigo_pais = "";
-        // configuracion.numero_telefono = "";
         configuracion.estado_conexion = false;
         await configuracion.save();
-        await apiWhatsapp.startSession(configuracion.instancia_id);
         return configuracion;
     }
 
-    async createConfiguracion(codigo_pais,numero_telefono, admin_id) {
-        let codeWhatsapp = customAlphabet(this.alphaNumeric, 10)();
+    async createConfiguracion(codigo_pais,numero_telefono, admin_id,transaction=null) {
+        let codeWhatsapp =  (nanoid(12).replace(/[^a-zA-Z0-9]/g, '')).toUpperCase();
         let configuracion = await Configuracion.create({
             codigo_pais: codigo_pais,
             numero_telefono: numero_telefono,
@@ -130,7 +140,7 @@ class ConfiguracionRepository {
             veripagos_username: "",
             veripagos_password: "",
             admin_id: admin_id
-        });
+        },{transaction:transaction});
         await apiWhatsapp.startSession(codeWhatsapp);
         return configuracion;
     }

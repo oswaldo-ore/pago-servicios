@@ -28,7 +28,6 @@ class ApiWhatsappWeb extends ApiWhatsapp {
             this.RESPONSE.message = response.data.message;
             return this.RESPONSE;
         } catch (error) {
-            console.log(error);
             if (error.response.data.error) {
                 this.RESPONSE.state = false;
                 this.RESPONSE.message = error.response.data.error;
@@ -63,13 +62,14 @@ class ApiWhatsappWeb extends ApiWhatsapp {
         const url = `${this.URL}/session/qr/${sessionId}`;
         try {
             let response = await axios.get(url);
-
-            const qrCode = await QRCode.toDataURL(response.data.qr);
             this.RESPONSE.state = response.data.success;
-            this.RESPONSE.message = "Codigo QR en base 64";
-            this.RESPONSE.data = {
-                code_qr: qrCode,
-            };
+            this.RESPONSE.message = response.data.message;
+            if(response.data.qr){
+                const qrCode = await QRCode.toDataURL(response.data.qr);
+                this.RESPONSE.data = {
+                    code_qr: qrCode,
+                };
+            }
             return this.RESPONSE;
         } catch (error) {
             if (error.response.data.error) {
@@ -91,7 +91,6 @@ class ApiWhatsappWeb extends ApiWhatsapp {
             });
             return response.data;
         } catch (error) {
-            console.log("Ocurio un error :" +error);
             if (error.response.data.error) {
                 this.RESPONSE.state = false;
                 this.RESPONSE.message = error.response.data.error;
@@ -176,7 +175,6 @@ class ApiWhatsappWeb extends ApiWhatsapp {
             this.RESPONSE.message = "Mensaje enviado correctamente";
             return this.RESPONSE;
         } catch (error) {
-            console.log("Ocurio un error :" +error);
             if (error.response.data) {
                 this.RESPONSE.state = false;
                 this.RESPONSE.message = error.response.data.error;
@@ -210,7 +208,6 @@ class ApiWhatsappWeb extends ApiWhatsapp {
             this.RESPONSE.message = "Mensaje enviado correctamente";
             return this.RESPONSE;
         } catch (error) {
-            console.log("Ocurio un error :" +error);
             if (error.response.data) {
                 this.RESPONSE.state = false;
                 this.RESPONSE.message = error.response.data.error;
@@ -252,7 +249,6 @@ class ApiWhatsappWeb extends ApiWhatsapp {
             this.RESPONSE.message = "Mensaje enviado correctamente";
             return this.RESPONSE;
         } catch (error) {
-            console.log("Ocurio un error :" +error);
             if (error.response.data.error) {
                 this.RESPONSE.state = false;
                 this.RESPONSE.message = error.response.data.error;
@@ -280,7 +276,6 @@ class ApiWhatsappWeb extends ApiWhatsapp {
             this.RESPONSE.message = "Mensaje enviado correctamente";
             return this.RESPONSE;
         } catch (error) {
-            console.log("Ocurio un error :" +error);
             if (error.response.data.error) {
                 this.RESPONSE.state = false;
                 this.RESPONSE.message = error.response.data.error;
@@ -301,7 +296,6 @@ class ApiWhatsappWeb extends ApiWhatsapp {
             this.RESPONSE.data = response.data.sessionInfo;
             return this.RESPONSE;
         } catch (error) {
-            console.log("Ocurio un error :" +error);
             if (error.response.data.error) {
                 this.RESPONSE.state = false;
                 this.RESPONSE.message = error.response.data.error;

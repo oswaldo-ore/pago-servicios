@@ -1,9 +1,13 @@
 const { Admin, Configuracion } = require('../models');
 const { Op } = require('sequelize');
 const { sequelize } = require('../models');
-
+const bcrypt = require('bcrypt');
 class AdminRepository {
-    async createUser(nombre,apellidos,correo, password) {
+    static async createUser(nombre,apellidos,correo, password,transaction = null) {
+        const existingUser = await Admin.findOne({ where: { email: correo } });
+        if (existingUser) {
+            throw new Error("El email ya ha sido registrado");
+        }
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         const admin = await Admin.create({
@@ -12,7 +16,7 @@ class AdminRepository {
             email: correo,
             password: hashedPassword,
             estado: 0,
-          });
+          },{transaction:transaction});
           return admin;
     }
 
@@ -28,6 +32,10 @@ class AdminRepository {
                 }
             ]
         });
+    }
+
+    static async getUserByPk(id){
+        return await Admin.findOne({ where: { id: id } });
     }
 
     static async getUserAndSettingByUserAndPassVeripago(username, password) {

@@ -76,6 +76,11 @@ const WhatsappController = {
         const facturaRepository = new FacturaRepository();
         await facturaRepository.actualizarEstadoDeLasFacturas();
         return res.json("holaclce");
+    },
+
+    async closeAllSession(req,res){
+        await ApiWhatsappWeb.terminateInactiveSessions();
+        return res.json("holaclce");
     }
 }
 

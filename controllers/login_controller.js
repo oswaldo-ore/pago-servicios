@@ -9,6 +9,7 @@ const LoginController = {
 
         try {
             const admin = await Admin.findOne({ where: { email } });
+            console.log(admin);
             if (!admin) {
                 return res.json(ResponseHelper.error('Credenciales inválidas.'));
             }
