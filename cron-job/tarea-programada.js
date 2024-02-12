@@ -22,7 +22,7 @@ class TareaProgramada {
             CreateDeudaMensual.handle();
         });
 
-        this.crearDeudaAutomatico = scheduleJob({rule: '*/30 * * * *', tz: this.zonaHorariaBolivia}, ()=>{
+        this.crearDeudaAutomatico = scheduleJob({rule: '* * * * *', tz: this.zonaHorariaBolivia}, ()=>{
             DetalleUsuarioFacturaRepository.createAutomaticDebts();
         });
 

@@ -61,7 +61,7 @@ class ConfiguracionRepository {
             await apiWhatsapp.startSession(configuracion.instancia_id);
         }
         let session = await apiWhatsapp.getSessionStatus(configuracion.instancia_id);
-        let response = null;
+        let response = session;
         if(session.message == ConfiguracionRepository.SESSION_NOT_CONNECTED){
             response = await apiWhatsapp.getQrCode(configuracion.instancia_id);
             while (response.message == ConfiguracionRepository.QR_CODE_NOT_READY) {
@@ -91,11 +91,7 @@ class ConfiguracionRepository {
     async verificarConexionQrByAdminId(admin_id){
         let configuracion = await this.getConfiguracionByAdminId(admin_id);
         let client = await apiWhatsapp.getClientInfo(configuracion.instancia_id);
-        if(!client.state) throw new Error("No se pudo conectar!");
-        while (!client.data) {
-            if(!client.state) throw new Error("No se pudo conectar!");
-            client = await apiWhatsapp.getClientInfo(configuracion.instancia_id);
-        }
+        if(client.message && client.message != ConfiguracionRepository.SESSION_CONNECTED) throw new Error("Whatsapp no conectado");
         let numero = client.data.me.user;
         numero = numero.replace("591","");
         configuracion.codigo_pais = "591";

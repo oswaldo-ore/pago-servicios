@@ -33,7 +33,8 @@ const ConfiguracionController = {
     async generarCodigoQrV2(req,res){
         try {
             let response = await configuracionRepository.generarCodigoQrByAdminId(req.user.id);
-            return res.json(ResponseHelper.success(response.data) );
+            console.log(response);
+            return res.json(ResponseHelper.success(response.data?response.data:response) );
         } catch (error) {
             return res.json(ResponseHelper.error(error.message));
         }

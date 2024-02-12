@@ -64,7 +64,7 @@ class ApiWhatsappWeb extends ApiWhatsapp {
             let response = await axios.get(url);
             this.RESPONSE.state = response.data.success;
             this.RESPONSE.message = response.data.message;
-            if(response.data.qr){
+            if(response.data && response.data.qr){
                 const qrCode = await QRCode.toDataURL(response.data.qr);
                 this.RESPONSE.data = {
                     code_qr: qrCode,
@@ -292,7 +292,7 @@ class ApiWhatsappWeb extends ApiWhatsapp {
         try {
             const response = await axios.get(url);
             this.RESPONSE.state = response.data.success;
-            this.RESPONSE.message = "Mensaje enviado correctamente";
+            this.RESPONSE.message = "session_connected";
             this.RESPONSE.data = response.data.sessionInfo;
             return this.RESPONSE;
         } catch (error) {
