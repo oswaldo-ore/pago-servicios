@@ -28,7 +28,7 @@ router.post('/test2', DeudaMensualController.generarDeudaMensuales);
 router.get('/test3', DeudaMensualController.getAllDeudasMensuales);
 router.post('/user/create',AdminController.createNewUser);
 router.post('/close/all-session',WhatsappController.closeAllSession);
-router.get('/send-qr',VeripagosDeudaFacturaService.crearVeripagosInstanceAndSendQrByManyDetalleUsuarioFactura);
+router.get('/send-qr',AdminController.notify);
 router.post('/webhook-veripagos',verificarAuthToVeripagos,FacturaController.webhookVeripagos)
 router.post('/admin/login',LoginController.loginAdmin);
 router.use(jwtMiddleware);

@@ -1,4 +1,5 @@
 const UserService = require('../services/user.service');
+const VeripagosDeudaFacturaService = require('../services/veripagos-deuda-factura.service');
 const ResponseHelper = require('../utils/helper_response');
 
 const AdminController = {
@@ -11,6 +12,16 @@ const AdminController = {
             return res.json(ResponseHelper.error(error.message));
         }
     },
+
+    async notify(req,res){
+        try {
+            let response = await VeripagosDeudaFacturaService.crearVeripagosInstanceAndSendQrByManyDetalleUsuarioFactura();
+            return res.json(ResponseHelper.success(null,"El usuario se ha creado correctamente"));
+        } catch (error) {
+            return res.json(ResponseHelper.error(error.message));
+            
+        }
+    }
 }
 
 module.exports = AdminController;
