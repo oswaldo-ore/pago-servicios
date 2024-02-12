@@ -65,7 +65,7 @@ class ConfiguracionRepository {
         if(session.message == ConfiguracionRepository.SESSION_NOT_CONNECTED){
             response = await apiWhatsapp.getQrCode(configuracion.instancia_id);
             while (response.message == ConfiguracionRepository.QR_CODE_NOT_READY) {
-                await new Promise(resolve => setTimeout(resolve,1000));
+                await new Promise(resolve => setTimeout(resolve,2000));
                 response = await apiWhatsapp.getQrCode(configuracion.instancia_id);
             }
         }
