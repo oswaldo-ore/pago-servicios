@@ -88,6 +88,7 @@ class VeripagosDeudaFacturaService {
         });
         message += `*Monto Total Debe: Bs. ${montoTotal.toFixed(2)}*\r\n\r\n`;
         message += `*AHORA PUEDES PAGAR POR QR*\r\n`;
+        console.log(user.id,user.nombre);
         if (user.id == 5) {
           let { result, setting } =
             await VeripagosDeudaFacturaService.crearVeripagosInstanceAndQr(
