@@ -57,7 +57,7 @@ class ConfiguracionRepository {
     }
     async generarCodigoQrByAdminId(admin_id){
         let configuracion = await this.getConfiguracionByAdminId(admin_id);
-        if(!configuracion.state){
+        if(!configuracion.estado_conexion){
             await apiWhatsapp.startSession(configuracion.instancia_id);
         }
         let session = await apiWhatsapp.getSessionStatus(configuracion.instancia_id);
