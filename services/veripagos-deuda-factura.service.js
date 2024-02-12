@@ -107,6 +107,65 @@ class VeripagosDeudaFacturaService {
       }
     }
   }
+
+  static async crearVeripagosInstanceAndSendQrByManyDetalleUsuarioFacturaByUserId(usuarioid) {
+    const user = await usuarioRepository.getUserConFacturasNoPagadasDeUnUsuario(usuarioid);
+    console.log(user);
+    let configuracion = user.Configuracion;
+    if(user.DetalleUsuarioFactura.length == 0){
+      throw new Error("El usuario no tiene deudas pendientes.");
+    }
+    if(!configuracion.estado_conexion){
+      throw new Error("No habilitado para el envio de mensajes a Whatsapp.");
+    }
+    if(user.telefono == "" && user.cod_pais == ""){
+      throw new Error("El usuario no tiene telefono registrado.");
+    }
+    if (user.cod_pais != "" && user.telefono != "") {
+      let message = user.nombre + " " + user.apellidos + "\r\n";
+      message += "*Tienes deudas pendientes.*" + "\r\n\r\n";
+      let montoTotal = 0;
+      user.DetalleUsuarioFactura.forEach((detalle) => {
+        message += `*Servicio:* ${detalle.Servicio.nombre}\r\n`;
+        message += `*Fecha:* ${detalle.getFechaFormateada()}\r\n`;
+        message += `*Monto:* Bs. ${detalle.monto.toFixed(2)}\r\n`;
+        message += `*Pago:* Bs. ${detalle.monto_pago.toFixed(2)}\r\n`;
+        message += `*Debe:* Bs. ${(
+          detalle.monto - detalle.monto_pago
+        ).toFixed(2)}\r\n`;
+        message += `-------------------------------------\r\n\r\n`;
+        let saldo = detalle.monto - detalle.monto_pago;
+        montoTotal += saldo < 0 ? 0 : saldo;
+      });
+      message += `*Monto Total Debe: Bs. ${montoTotal.toFixed(2)}*\r\n\r\n`;
+
+      let phoneNumber = user.cod_pais + user.telefono;
+      apiWhatsappWeb.enviarMensajeTexto(
+        phoneNumber,
+        message,
+        configuracion.instancia_id
+      );
+      try {
+        let message2 = `*Monto Total a pagar: Bs. ${montoTotal.toFixed(2)}*\r\n\r\n`;
+        message2 += `*AHORA PUEDES PAGAR POR QR*\r\n`;
+        let { result, setting } =
+          await VeripagosDeudaFacturaService.crearVeripagosInstanceAndQr(
+            1,
+            montoTotal,
+            user.DetalleUsuarioFactura
+          );
+        await apiWhatsappWeb.enviarMensajeTextoWithFile(
+          user.cod_pais + user.telefono,
+          message2,
+          setting.instancia_id,
+          result.Data.qr,
+          "Qr.png"
+        );
+      } catch (error) {
+        console.log("Ocurrio un error al enviar el qr de veripagos",error);
+      }
+    }
+  }
 }
 
 module.exports = VeripagosDeudaFacturaService;

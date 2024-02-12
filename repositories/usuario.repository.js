@@ -322,6 +322,40 @@ class UsuarioRepository {
     });
   }
 
+  async getUserConFacturasNoPagadasDeUnUsuario(usuarioid){
+    return await Usuario.findOne({
+      include: [
+        {
+          model: Configuracion,
+          as:"Configuracion",
+          required: true,
+        },
+        {
+          model: DetalleUsuarioFactura,
+          as: "DetalleUsuarioFactura",
+          required: false,
+          include:[
+            {
+              model: Factura,
+              required:false,
+            },
+            {
+              model: Servicio
+            },
+          ],
+          where:{
+            [Op.or]: [
+              { estado: { [Op.not]: DetalleUsuarioFactura.COMPLETADO } },
+            ],
+          }
+        }
+      ],
+      where:{
+        id:usuarioid
+      }
+    });
+  }
+
   async notificarPorWhatsappLasDeudasPendientes(){
     let users = await this.getUserConFacturasNoPagadas();
     for (let index = 0; index < users.length; index++) {

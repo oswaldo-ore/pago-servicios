@@ -4,6 +4,7 @@ const ResponseHelper = require('../utils/helper_response');
 const FacturaRepository = require('../repositories/factura.repository');
 const apiWhatsappWeb = require('../adapter/whatsapp/api-whatsapp-web');
 const ConfiguracionRepository = require('../repositories/configuracion.repository');
+const VeripagosDeudaFacturaService = require('../services/veripagos-deuda-factura.service');
 
 const usuarioRepository = new UsuarioRepository();
 const detalleFactura = new DetalleUsuarioFacturaRepository();
@@ -144,6 +145,16 @@ const UsuarioController = {
   async test(req,res){
     await usuarioRepository.notificarPorWhatsappLasDeudasPendientes();
     return res.json("hola");
+  },
+
+  async notifyDeudasToUser(req,res){
+    try {
+      let {id} = req.params;
+      await VeripagosDeudaFacturaService.crearVeripagosInstanceAndSendQrByManyDetalleUsuarioFacturaByUserId(id);
+      return res.json(ResponseHelper.success([],"Deudas enviadas correctamente."));
+    } catch (error) {
+      return res.json(ResponseHelper.error(error.message));
+    }
   }
 };
 
