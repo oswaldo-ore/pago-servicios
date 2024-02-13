@@ -1,4 +1,4 @@
-const {Movimiento,DetalleMovimiento} = require('../models');
+const {Movimiento,DetalleMovimiento, DetalleUsuarioFactura, Servicio } = require('../models');
 const { sequelize } = require('../models');
 class MovimientoRepository{
 
@@ -24,6 +24,35 @@ class MovimientoRepository{
             movimiento: movimiento,
             detalle: detalle,
         }
+    }
+
+    static async getMovementsByUserId(userId){
+    return await Movimiento.findAll({
+            include: [
+                {
+                    model: DetalleMovimiento,
+                    as: 'DetallesMovimiento',
+                    include: [
+                        {
+                            model: DetalleUsuarioFactura,
+                            as: 'DetalleUsuarioFactura',
+                            include: [
+                                {
+                                    model: Servicio,
+                                    as: 'Servicio'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            order: [
+                ['fecha', 'DESC']
+            ],
+            where: {
+                usuarioid: userId
+            }
+        });
     }
 }
 

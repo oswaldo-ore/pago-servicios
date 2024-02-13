@@ -5,6 +5,7 @@ const FacturaRepository = require('../repositories/factura.repository');
 const apiWhatsappWeb = require('../adapter/whatsapp/api-whatsapp-web');
 const ConfiguracionRepository = require('../repositories/configuracion.repository');
 const VeripagosDeudaFacturaService = require('../services/veripagos-deuda-factura.service');
+const MovimientoRepository = require('../repositories/movimiento.repository');
 
 const usuarioRepository = new UsuarioRepository();
 const detalleFactura = new DetalleUsuarioFacturaRepository();
@@ -152,6 +153,16 @@ const UsuarioController = {
       let {id} = req.params;
       await VeripagosDeudaFacturaService.crearVeripagosInstanceAndSendQrByManyDetalleUsuarioFacturaByUserId(id);
       return res.json(ResponseHelper.success([],"Deudas enviadas correctamente."));
+    } catch (error) {
+      return res.json(ResponseHelper.error(error.message));
+    }
+  },
+
+  async showMovements(req,res){
+    try {
+      let {id} = req.params;
+      let movements = await MovimientoRepository.getMovementsByUserId(id);
+      return res.json(ResponseHelper.success(movements,ResponseHelper.listar("Movimientos")));
     } catch (error) {
       return res.json(ResponseHelper.error(error.message));
     }
