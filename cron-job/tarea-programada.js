@@ -3,22 +3,18 @@ const NotifyToUser = require('./schedule/notify-to-user');
 const CreateDeudaMensual = require('./schedule/create-deuda-mensual');
 const DetalleUsuarioFacturaRepository = require('../repositories/detalle.factura.repository');
 const moment =  require('moment');
-const apiWhatsappWeb = require('../adapter/whatsapp/api-whatsapp-web');
 const VeripagosDeudaFacturaService = require('../services/veripagos-deuda-factura.service');
-const VeripagosAPI = require('../adapter/veripagos/veripagos-api');
-const ConfiguracionRepository = require('../repositories/configuracion.repository');
-const configuracionRepository = new ConfiguracionRepository();
 class TareaProgramada {
     zonaHorariaBolivia = 'America/La_Paz';
     constructor() {
-        this.tareaDia20 = scheduleJob({ rule: '0 9 20 * *', tz: this.timeZone }, () => {
+        this.tareaDia20 = scheduleJob({ rule: '0 9 20 * *', tz: this.zonaHorariaBolivia }, () => {
             NotifyToUser.ejecutarNotificaciones();
         });
 
-        this.tareaFinDeMes = scheduleJob({ rule: '0 9 28 * *', tz: this.timeZone }, () => {
+        this.tareaFinDeMes = scheduleJob({ rule: '0 9 28 * *', tz: this.zonaHorariaBolivia }, () => {
             VeripagosDeudaFacturaService.crearVeripagosInstanceAndSendQrByManyDetalleUsuarioFactura();
         });
-        this.crearDeudaMensuales = scheduleJob({ rule: '55 23 * * *', tz: this.timeZone },async () => {
+        this.crearDeudaMensuales = scheduleJob({ rule: '55 23 * * *', tz: this.zonaHorariaBolivia },async () => {
             CreateDeudaMensual.handle();
         });
 
@@ -26,7 +22,7 @@ class TareaProgramada {
             DetalleUsuarioFacturaRepository.createAutomaticDebts();
         });
 
-        this.prueba = scheduleJob({ rule: '*/2 * * * *', tz: this.timeZone },async ()=>{
+        this.prueba = scheduleJob({ rule: '*/2 * * * *', tz: this.zonaHorariaBolivia },async ()=>{
             moment.locale('es');
             console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
             console.log("Tarea programada ejecutandose");
