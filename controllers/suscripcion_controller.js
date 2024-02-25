@@ -88,7 +88,7 @@ const SuscripcionController = {
 
       const suscripcion = await suscripcionRepository.desactivarSuscripcion(id);
 
-      return res.json(ResponseHelper.success(suscripcion, ResponseHelper.deactivated('suscripción')));
+      return res.json(ResponseHelper.success(suscripcion, ResponseHelper.desactivated('suscripción')));
     } catch (error) {
       console.error('Error al desactivar la suscripción:', error);
       return res.json(ResponseHelper.error('Error al desactivar la suscripción'));
