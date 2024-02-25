@@ -1,8 +1,9 @@
 const MedidorRepository = require('../repositories/medidor.repository');
+const UsuarioRepository = require('../repositories/usuario.repository');
+const UserService = require('../services/user.service');
 const ResponseHelper = require('../utils/helper_response');
 
 const medidorRepository = new MedidorRepository();
-
 const MedidorController = {
   async listarMedidores(req, res) {
     try {
@@ -29,6 +30,9 @@ const MedidorController = {
   async crearMedidor(req, res) {
     try {
       const { fecha, cantidad_medido, monto, mes, detalle, servicioId, usuarioId } = req.body;
+      if (!await UserService.verifyUserWithSubscriptionEnabled(usuarioId,servicioId) ) {
+        return res.json(ResponseHelper.error('Usuario no habilitado o no suscripto al servicio'));
+      }
       const medidor = await medidorRepository.crearMedidor(fecha, cantidad_medido, monto, mes, detalle, servicioId, usuarioId);
       return res.status(201).json(ResponseHelper.success(medidor, 'Medidor creado correctamente'));
     } catch (error) {

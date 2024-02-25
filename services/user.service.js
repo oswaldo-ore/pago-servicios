@@ -1,6 +1,7 @@
 const { sequelize } = require("../models");
 const AdminRepository = require("../repositories/admin.repository");
 const ConfiguracionRepository = require("../repositories/configuracion.repository");
+const SuscripcionRepository = require("../repositories/suscripcion.repository");
 const configuracionRepository = new ConfiguracionRepository();
 class UserService {
     static async crearNuevoUsuarioAdmin(nombre,apellidos,correo,password,cod_pais,phone_number) {
@@ -10,6 +11,11 @@ class UserService {
             admin.Configuracion = config;
             return admin;
         });
+    }
+
+    static async verifyUserWithSubscriptionEnabled(usuarioId,servicioId) {
+        let subscription = await SuscripcionRepository.getSubscriptionByUserAndService(usuarioId,servicioId);
+        return subscription.habilitado;
     }
 }
 

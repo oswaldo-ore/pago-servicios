@@ -16,7 +16,12 @@ class SuscripcionRepository {
         ],
         offset,
         limit: +limit,
-      });
+        //order by habilitado true primero false despues y por nombre DESC en node js sequelize
+        order: [
+          ["habilitado", "DESC"],
+          [{ model: Usuario, as: 'Usuario' }, 'nombre', 'ASC'],
+        ],
+    });
     const count = await Suscripcion.count({
       lean: true,
     });
@@ -121,6 +126,25 @@ class SuscripcionRepository {
       },
     });
     return subscriptions;
+  }
+
+  static async getSubscriptionByUserAndService(usuarioId, servicioId) {
+    const subscription = await Suscripcion.findOne({
+      include: [
+        {
+          model: Usuario,
+          where: {
+            id: usuarioId,
+            estado: true,
+          },
+        },
+      ],
+      where: {
+        usuarioid: usuarioId,
+        servicioid: servicioId,
+      },
+    });
+    return subscription;
   }
 }
 

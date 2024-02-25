@@ -382,6 +382,15 @@ class UsuarioRepository {
       }
     }
   }
+
+  async isUserEnabled(usuarioId){
+    return await Usuario.findOne({
+      where:{
+        id:usuarioId,
+        estado:true
+      }
+    });
+  }
 }
 
 module.exports = UsuarioRepository;
