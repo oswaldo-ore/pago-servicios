@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'servicioid',
         otherKey: 'usuarioid',
       });
+      Servicio.hasMany(models.Suscripcion, { foreignKey: 'servicioid' });
     }
     toJSON() {
       // Oculta las columnas createdAt, updatedAt y deletedAt

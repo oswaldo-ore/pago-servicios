@@ -42,6 +42,7 @@ router.put('/usuarios/:id/activar', UsuarioController.activarUsuario);
 router.put('/usuarios/:id/desactivar', UsuarioController.desactivarUsuario);
 router.get('/usuarios/suscripciones', UsuarioController.usuariosConSuscripciones);
 router.get('/usuarios/:id/deudas', UsuarioController.detallePagoDeUsuario);
+router.post('/usuarios/:id/create-debt', UsuarioController.createDebt);
 router.post('/usuarios/:id/pagar', UsuarioController.pagarDeudaDelUsuario);
 router.post('/usuarios/:id/notify-deudas', UsuarioController.notifyDeudasToUser);
 router.get('/usuarios/:id/movements', UsuarioController.showMovements);

@@ -17,9 +17,14 @@ const ServicioController = {
 
   async listarTodosServicios(req, res) {
     try {
-      const { page = 1, limit = 1000 } = req.query;
-      const servicios = await servicioRepository.listarServicios(page, limit);
-      return res.json(ResponseHelper.success(servicios.data, ResponseHelper.listar('servicios')));
+      const { page = 1, limit = 1000, userId = null} = req.query;
+      let services;
+      if(userId){
+        services = await servicioRepository.getAllServicesToUser(page, limit, userId);
+      }else{
+        services = await servicioRepository.listarServicios(page, limit);
+      }
+      return res.json(ResponseHelper.success(services.data, ResponseHelper.listar('servicios')));
     } catch (error) {
       console.error('Error al listar los servicios:', error);
       return res.json(ResponseHelper.error(ResponseHelper.errorListar('servicios')));

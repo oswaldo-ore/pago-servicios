@@ -130,6 +130,18 @@ const UsuarioController = {
       return res.json(ResponseHelper.error('Error al listar las deudas' ));
     }
   },
+
+  async createDebt(req, res){
+    try {
+      const {id}  = req.params;
+      const {amount,serviceId, date } = req.body;
+      let deuda = await detalleFactura.createDebtAndSendMessageToUser(id,serviceId,parseFloat(amount),date);
+      return res.json(ResponseHelper.success(deuda,ResponseHelper.created("Deuda")));
+    } catch (error) {
+      console.error('Error create debt:', error);
+      return res.json(ResponseHelper.error('Error al crear la deuda' ));
+    }
+  },
   async pagarDeudaDelUsuario(req,res){
     try {
       const {id}  = req.params;

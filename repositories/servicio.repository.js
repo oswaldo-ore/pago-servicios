@@ -1,9 +1,33 @@
-const { Servicio } = require('../models');
+const { Servicio,Suscripcion } = require('../models');
 
 class ServicioRepository {
   async listarServicios(page, limit) {
     const offset = (page - 1) * limit;
     const { count, rows } = await Servicio.findAndCountAll({
+      offset,
+      limit: +limit,
+    });
+    return {
+      total: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: +page,
+      data: rows,
+    };
+  }
+
+  async getAllServicesToUser(page,limit,userId){
+    const offset = (page - 1) * limit;
+    const { count, rows } = await Servicio.findAndCountAll({
+      include:[
+        {
+          model: Suscripcion,
+          where: {
+            usuarioid: userId,
+            habilitado: true,
+            tipo: Suscripcion.FIJO
+          }
+        }
+      ],
       offset,
       limit: +limit,
     });
@@ -65,6 +89,14 @@ class ServicioRepository {
     }
     servicio.estado = false;
     await servicio.save();
+    return servicio;
+  }
+
+  async getServiceById(id){
+    const servicio = await Servicio.findByPk(id);
+    if (!servicio) {
+      throw new Error('Servicio no encontrado');
+    }
     return servicio;
   }
 }

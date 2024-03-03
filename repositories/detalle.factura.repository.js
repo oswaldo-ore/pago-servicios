@@ -13,7 +13,9 @@ const {
 const { Op } = require('sequelize');
 const ConfiguracionRepository = require('./configuracion.repository');
 const SuscripcionRepository = require('./suscripcion.repository');
+const ServicioRepository = require('./servicio.repository');
 const configuracionRepository = new ConfiguracionRepository();
+const serviceRepository = new ServicioRepository();
 nombresMeses = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
@@ -215,30 +217,19 @@ class DetalleUsuarioFacturaRepository {
         let date = moment();
         let day = date.date();
         let userWithSubscriptionAutomatic = await SuscripcionRepository.getUserWithSubscriptionAutomatic(day);
-        let configuracion = await configuracionRepository.getConfiguracion();
         for (let index = 0; index < userWithSubscriptionAutomatic.length; index++) {
             const subscription = userWithSubscriptionAutomatic[index]; //suscripcion
             const user = subscription.Usuario;
             let date = moment().format('YYYY-MM-DD');
-            let date2 = moment().format('DD-MM-YYYY');
             const exitsDeuda = await this.existsDeudaWithUserServiceAndDateAndIsGenerateAutomatic(subscription.usuarioid,subscription.servicioid,date);
             if(!exitsDeuda){
-                let detalle = await DetalleUsuarioFactura.create({
-                    servicioid: subscription.servicioid,
-                    usuarioid: subscription.usuarioid,
-                    facturaid: null,
-                    monto: parseFloat(subscription.monto.toFixed(2)),
-                    es_deuda_generada: DetalleUsuarioFactura.GENERADO_AUTOMATICO,
-                    fecha: date,
-                });
-                let mensaje = `Se ha registrado una nueva deuda.\r\n`;
-                mensaje += `*Deuda:* ${date2}\r\n`;
-                mensaje += `*Servicio:* ${subscription.Servicio.nombre}\r\n`;
-                mensaje += `*Monto:* Bs. ${detalle.monto}\r\n`;
-                if(configuracion.estado_conexion){
-                    let number = user.cod_pais + user.telefono;
-                    await apiWhatsappWeb.enviarMensajeTexto(number,mensaje,configuracion.insta);
-                }
+                this.createDebtAndSendMessage(
+                    subscription.usuarioid,
+                    subscription.servicioid,
+                    subscription.monto,
+                    date,
+                    DetalleUsuarioFactura.GENERADO_AUTOMATICO
+                );
                 console.log("Se esta creando la deuda");
             }else{
                 console.log("Ya existe la deuda");
@@ -247,6 +238,41 @@ class DetalleUsuarioFacturaRepository {
     }
     async getDetalleUsuarioFacturaById(detalleUsuarioFacturaId) {
         return await DetalleUsuarioFactura.findByPk(detalleUsuarioFacturaId);
+    }
+
+    async createDebt(userId,serviceId,amount,date){
+        return await DetalleUsuarioFactura.create({
+            servicioid: serviceId,
+            usuarioid: userId,
+            facturaid: null,
+            monto: amount,
+            fecha: date
+        });
+
+    }
+
+    async createDebtAndSendMessageToUser(userId,serviceId,amount,date,isDebtGenerate = DetalleUsuarioFactura.NO_GENERADO){
+        let date2 = moment().format('DD-MM-YYYY');
+        let detalle = await DetalleUsuarioFactura.create({
+            servicioid: serviceId,
+            usuarioid: userId,
+            facturaid: null,
+            monto: parseFloat(amount.toFixed(2)),
+            es_deuda_generada: isDebtGenerate,
+            fecha: date,
+        });
+        let service = await serviceRepository.getServiceById(serviceId);
+        let configuracion = await configuracionRepository.getConfiguracion();
+        if(configuracion.estado_conexion){
+            let user = await Usuario.findByPk(userId);
+            let mensaje = `Se ha registrado una nueva deuda.\r\n`;
+            mensaje += `*Deuda:* ${date2}\r\n`;
+            mensaje += `*Servicio:* ${Servicio.nombre}\r\n`;
+            mensaje += `*Monto:* Bs. ${detalle.monto}\r\n`;
+            let number = user.cod_pais + user.telefono;
+            await apiWhatsappWeb.enviarMensajeTexto(number,mensaje,configuracion.instancia_id);
+        }
+        return detalle;
     }
 }
 
