@@ -17,7 +17,9 @@ const SuscripcionController = {
   async crearSuscripcion(req, res) {
     try {
       const { usuarioid, servicioid, tipo, monto, tiene_medidor,fecha_deuda = null } = req.body;
-
+      if(tipo == "automatico" && fecha_deuda == null){
+        return res.json(ResponseHelper.error('La fecha de deuda es requerida para suscripciones automáticas'));
+      }
       const suscripcion = await suscripcionRepository.crearSuscripcion(
         usuarioid,
         servicioid,
