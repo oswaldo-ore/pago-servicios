@@ -267,7 +267,7 @@ class DetalleUsuarioFacturaRepository {
             let user = await Usuario.findByPk(userId);
             let mensaje = `Se ha registrado una nueva deuda.\r\n`;
             mensaje += `*Deuda:* ${date2}\r\n`;
-            mensaje += `*Servicio:* ${Servicio.nombre}\r\n`;
+            mensaje += `*Servicio:* ${service.nombre}\r\n`;
             mensaje += `*Monto:* Bs. ${detalle.monto}\r\n`;
             let number = user.cod_pais + user.telefono;
             await apiWhatsappWeb.enviarMensajeTexto(number,mensaje,configuracion.instancia_id);
