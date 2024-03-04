@@ -6,7 +6,11 @@ module.exports = (sequelize, DataTypes) => {
             DetailPrePayment.belongsTo(models.PrePayment, {
                 foreignKey: "pre_payment_id",
             });
+            DetailPrePayment.belongsTo(models.DetalleUsuarioFactura, {
+                foreignKey: "detail_user_invoice_id",
+            });
         }
+
     }
 
     DetailPrePayment.init(

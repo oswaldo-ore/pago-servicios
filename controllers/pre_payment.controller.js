@@ -27,10 +27,11 @@ const PrePaymentController = {
 
     async getPrePayments(req, res) {
         try {
-            const { page = 1, limit = 8 } = req.query;
-            const prePayments = await prePaymentRepository.getPrePayments(page, limit);
+            const { page = 1, limit = 8, userId} = req.query;
+            const prePayments = await prePaymentRepository.getPrePayments(parseInt(userId),parseInt(page), parseInt(limit));
             return res.json(ResponseHelper.success(prePayments, ResponseHelper.listar('pagos adelantados')));
         } catch (error) {
+            console.log(error);
             return res.json(ResponseHelper.error(ResponseHelper.errorListar('pagos adelantados')));
         }
     }

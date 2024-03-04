@@ -77,7 +77,7 @@ router.post("/detalle/factura/pagar",FacturaController.pagarFactura);
 router.post("/detalle/factura/devolver",FacturaController.devolverPrestamoDelPago);
 
 router.post('/prepayment/register', PrePaymentController.registerPrePayment);
-router.get('/prepayment/', PrePaymentController.getPrePayments);
+router.get('/prepayment/list', PrePaymentController.getPrePayments);
 
 router.get('/deudas-mensuales', DeudaMensualController.getAllDeudasMensuales);
 router.get('/configuracion', ConfiguracionController.getConfiguracionV2);

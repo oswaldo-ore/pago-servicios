@@ -40,7 +40,7 @@ module.exports = {
       state: {
         type: Sequelize.INTEGER,
         defaultValue: 0,
-        comment: "0: Adelantado, 1: parcialmente, 2: pagado",
+        comment: "0: Disponible, 1: Aplicado parc., 2: Completado",
       },
       createdAt: {
         type: Sequelize.DATE,
