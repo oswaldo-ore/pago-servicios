@@ -8,7 +8,8 @@ const {
     MedidorController,
     LoginController,
     WhatsappController,
-    ConfiguracionController
+    ConfiguracionController,
+    PrePaymentController
 } = require('../controllers');
 
 const router = express.Router();
@@ -46,6 +47,7 @@ router.post('/usuarios/:id/create-debt', UsuarioController.createDebt);
 router.post('/usuarios/:id/pagar', UsuarioController.pagarDeudaDelUsuario);
 router.post('/usuarios/:id/notify-deudas', UsuarioController.notifyDeudasToUser);
 router.get('/usuarios/:id/movements', UsuarioController.showMovements);
+router.get('/usuarios/:id/movements-v2', UsuarioController.showMovementsWithPaginate);
 
 router.get('/servicios/listar', ServicioController.listarServicios);
 router.get('/servicios/listar-todo', ServicioController.listarTodosServicios);
@@ -73,6 +75,9 @@ router.put('/factura/:id/estado-prestado', FacturaController.cambiarEstadoPresta
 
 router.post("/detalle/factura/pagar",FacturaController.pagarFactura);
 router.post("/detalle/factura/devolver",FacturaController.devolverPrestamoDelPago);
+
+router.post('/prepayment/register', PrePaymentController.registerPrePayment);
+router.get('/prepayment/', PrePaymentController.getPrePayments);
 
 router.get('/deudas-mensuales', DeudaMensualController.getAllDeudasMensuales);
 router.get('/configuracion', ConfiguracionController.getConfiguracionV2);

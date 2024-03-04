@@ -6,6 +6,7 @@ const MedidorController = require('./medidor_controller');
 const LoginController = require('./login_controller');
 const WhatsappController = require('./whatsapp_controller');
 const ConfiguracionController = require("./configuracion_controller");
+const PrePaymentController = require('./pre_payment.controller');
 // Importa otros controladores según sea necesario
 
 module.exports = {
@@ -16,6 +17,7 @@ module.exports = {
   MedidorController,
   LoginController,
   WhatsappController,
-  ConfiguracionController
+  ConfiguracionController,
+  PrePaymentController
   // Exporta otros controladores según sea necesario
 };

@@ -391,6 +391,16 @@ class UsuarioRepository {
       }
     });
   }
+
+  async addBalanceToUser(userId,amount){
+    const user = await Usuario.findByPk(userId);
+    if (!user) {
+      throw new Error('Usuario no encontrado');
+    }
+    user.balance += amount;
+    await user.save();
+    return user;
+  }
 }
 
 module.exports = UsuarioRepository;

@@ -34,6 +34,12 @@ module.exports = (sequelize, DataTypes) => {
     cod_pais: DataTypes.STRING,
     telefono: DataTypes.STRING,
     estado: DataTypes.BOOLEAN,
+    balance:{
+      type: DataTypes.DOUBLE,
+      defaultValue:0,
+      allowNull: false,
+      comment: 'Saldo del usuario'
+    },
     configuracion_id: {
       type: DataTypes.INTEGER,
       allowNull: false,

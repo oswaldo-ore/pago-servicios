@@ -35,6 +35,17 @@ module.exports = (sequelize, DataTypes) => {
             notificar: DataTypes.BOOLEAN,
             // iscancelado: DataTypes.BOOLEAN,
             // isprestado:DataTypes.BOOLEAN,
+            description: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                defaultValue: "Registro del detalle de la factura",
+            },
+            created_by_invoice: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: 1,
+                comment: '0: No, 1: Yes'
+            },
             visto: DataTypes.TINYINT,
             estado: DataTypes.TINYINT,
             monto_pago: DataTypes.DOUBLE,

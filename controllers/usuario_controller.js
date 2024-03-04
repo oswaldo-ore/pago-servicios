@@ -178,6 +178,16 @@ const UsuarioController = {
     } catch (error) {
       return res.json(ResponseHelper.error(error.message));
     }
+  },
+  async showMovementsWithPaginate(req,res){
+    try {
+      let {page = 1,limit = 10} = req.query;
+      let {id} = req.params;
+      let movements = await MovimientoRepository.getMovementsByUserIdWithPaginate(id,page,limit);
+      return res.json(ResponseHelper.success(movements,ResponseHelper.listar("Movimientos")));
+    } catch (error) {
+      return res.json(ResponseHelper.error(error.message));
+    }
   }
 };
 
