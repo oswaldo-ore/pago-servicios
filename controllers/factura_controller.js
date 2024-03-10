@@ -1,13 +1,21 @@
 const FacturaRepository = require('../repositories/factura.repository');
 const VeripagosInstanceRepository = require('../repositories/veripagos-instance.repository');
 const ResponseHelper = require('../utils/helper_response');
+
+const moment = require('moment');
 const facturaRepository = new FacturaRepository();
 
 const FacturaController = {
 
   async listaFacturaConDetalle(req, res) {
-    const { page = 1, limit = 8 } = req.query;
-    const facturas = await facturaRepository.listarFacturas(page,limit);
+    const {
+      page = 1,
+      limit = 8 ,
+      search = '',
+      startDate = moment().startOf('year').format('YYYY-MM-dd'),
+      endDate= moment().format('YYYY-MM-dd')
+    } = req.query;
+    const facturas = await facturaRepository.listarFacturas(page,limit,search,startDate,endDate);
 
     return res.json(ResponseHelper.success(facturas, 'Factura listado correctamente'));
   },

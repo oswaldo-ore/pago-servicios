@@ -26,7 +26,7 @@ class FacturaRepository {
         this.url_image = "https://servicios.tecnosoft.xyz";
     }
 
-    async listarFacturas(page = 1, limit = 8) {
+    async listarFacturas(page = 1, limit = 8,search,startDate,endDate) {
         const offset = (page - 1) * limit;
         const { count, rows } = await Factura.findAndCountAll({
             offset,
@@ -44,18 +44,31 @@ class FacturaRepository {
                 },
                 {
                     model: Servicio,
+                    required: true
                 }
             ],
             order: [
                 ['fecha', 'DESC']
-              ],
+            ],
+            where:{
+                [Op.or]: [
+                    sequelize.where(
+                        sequelize.fn("concat", sequelize.col("Servicio.nombre")),
+                        {
+                            [Op.like]: `%${search}%`,
+                        }
+                    ),
+                ],
+                fecha: {
+                    [Op.gte]: startDate,
+                    [Op.lte]: endDate
+                }
+            },
+            distinct: true
         });
-        const total = await Factura.count({
-            lean: true
-          });
         return {
-            total: total,
-            totalPages: Math.ceil(total / limit),
+            total: count,
+            totalPages: Math.ceil(count / limit),
             currentPage: +page,
             data: rows,
         };

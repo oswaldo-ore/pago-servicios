@@ -2,7 +2,7 @@ const { Op, literal, fn } = require("sequelize");
 const { Suscripcion, Servicio, Usuario, sequelize } = require("../models");
 const moment = require("moment");
 class SuscripcionRepository {
-  async listarPaginacion(page, limit) {
+  async listarPaginacion(page, limit, search = "") {
     const offset = (page - 1) * limit;
     const { rows: suscripciones, count: total } =
       await Suscripcion.findAndCountAll({
@@ -21,13 +21,29 @@ class SuscripcionRepository {
           ["habilitado", "DESC"],
           [{ model: Usuario, as: 'Usuario' }, 'nombre', 'ASC'],
         ],
+        where: {
+          [Op.or]: [
+            sequelize.where(
+              sequelize.fn("concat", sequelize.col("Usuario.nombre"), " ", sequelize.col("Usuario.apellidos")),
+              {
+                [Op.like]: `%${search}%`,
+              }
+            ),
+            sequelize.where(
+              sequelize.fn("concat", sequelize.col("Servicio.nombre")),
+              {
+                [Op.like]: `%${search}%`,
+              }
+            ),
+          ],
+        },
     });
-    const count = await Suscripcion.count({
-      lean: true,
-    });
+    // const count = await Suscripcion.count({
+    //   lean: true,
+    // });
     return {
-      total: count,
-      totalPages: Math.ceil(count / limit),
+      total: total,
+      totalPages: Math.ceil(total / limit),
       currentPage: +page,
       data: suscripciones,
     };
