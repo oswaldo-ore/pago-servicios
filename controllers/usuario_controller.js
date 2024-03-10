@@ -6,6 +6,7 @@ const apiWhatsappWeb = require('../adapter/whatsapp/api-whatsapp-web');
 const ConfiguracionRepository = require('../repositories/configuracion.repository');
 const VeripagosDeudaFacturaService = require('../services/veripagos-deuda-factura.service');
 const MovimientoRepository = require('../repositories/movimiento.repository');
+const {DetalleUsuarioFactura} = require('../models');
 
 const usuarioRepository = new UsuarioRepository();
 const detalleFactura = new DetalleUsuarioFacturaRepository();
@@ -125,6 +126,18 @@ const UsuarioController = {
         "pagadas": canceladas
       }
       return res.json(ResponseHelper.success(data,ResponseHelper.listar("Usuarios Con suscripciones") ));
+    } catch (error) {
+      console.error('Error al listar el deudas:', error);
+      return res.json(ResponseHelper.error('Error al listar las deudas' ));
+    }
+  },
+
+  async detallePagoDeUsuarioPaginate(req,res){
+    try {
+      const {id}  = req.params;
+      const { page = 1,limit = 10, state = DetalleUsuarioFactura.PENDIENTE } =req.query;
+      const data = await detalleFactura.deudasDeUnUsuarioWithPaginate(id,page,limit,state);
+      return res.json(ResponseHelper.success(data,ResponseHelper.listar("Deudas del cliente") ));
     } catch (error) {
       console.error('Error al listar el deudas:', error);
       return res.json(ResponseHelper.error('Error al listar las deudas' ));

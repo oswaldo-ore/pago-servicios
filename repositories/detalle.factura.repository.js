@@ -52,6 +52,60 @@ class DetalleUsuarioFacturaRepository {
         return detallesPrestadosNoCancelados;
     }
 
+    async deudasDeUnUsuarioWithPaginate(usuarioId, page, limit,state) {
+        //sacar los valores para el paginate
+        const offset = (page - 1) * limit;
+        let stateWhere = {};
+        if(state == DetalleUsuarioFactura.COMPLETADO){
+            stateWhere.estado = DetalleUsuarioFactura.COMPLETADO;
+        }else if(state == -1){
+            stateWhere.estado = {
+                [Op.or]: [DetalleUsuarioFactura.PENDIENTE, DetalleUsuarioFactura.PRESTADO, DetalleUsuarioFactura.COMPLETADO]
+            }
+        }else{
+            stateWhere.estado = {
+                [Op.or]: [DetalleUsuarioFactura.PENDIENTE, DetalleUsuarioFactura.PRESTADO ]
+            }
+        }
+        console.log(stateWhere);
+        const { count, rows }  = await DetalleUsuarioFactura.findAndCountAll({
+            include: [
+                {
+                    model: Usuario,
+                    required: true
+                },
+                {
+                    model: Servicio,
+                    required: false,
+                },
+                {
+                    model: Factura,
+                    required: false,
+                }
+            ],
+            where: {
+                usuarioid: usuarioId,
+                // estado: {
+                //     [Op.or]: [DetalleUsuarioFactura.PENDIENTE, DetalleUsuarioFactura.PRESTADO ] 
+                // }
+                ...stateWhere
+            },
+            order: [
+                ["fecha","DESC"],
+                ["monto","DESC"]
+            ],
+            offset,
+            limit: +limit,
+            distinct: true
+        });
+        return {
+            total: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: +page,
+            data: rows,
+        };
+    }
+
     async pagarDeudasNoCanceladasDeUnUsuario(usuarioId,monto,detalle) {
         const transaction = await sequelize.transaction();
         try {
