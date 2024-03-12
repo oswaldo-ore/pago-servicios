@@ -277,7 +277,8 @@ class DetalleUsuarioFacturaRepository {
             let date = moment().format('YYYY-MM-DD');
             const exitsDeuda = await this.existsDeudaWithUserServiceAndDateAndIsGenerateAutomatic(subscription.usuarioid,subscription.servicioid,date);
             if(!exitsDeuda){
-                this.createDebtAndSendMessage(
+                const detalleFactura = new DetalleUsuarioFacturaRepository();
+                detalleFactura.createDebtAndSendMessageToUser(
                     subscription.usuarioid,
                     subscription.servicioid,
                     subscription.monto,
