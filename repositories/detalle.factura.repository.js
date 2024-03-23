@@ -67,7 +67,6 @@ class DetalleUsuarioFacturaRepository {
                 [Op.or]: [DetalleUsuarioFactura.PENDIENTE, DetalleUsuarioFactura.PRESTADO ]
             }
         }
-        console.log(stateWhere);
         const { count, rows }  = await DetalleUsuarioFactura.findAndCountAll({
             include: [
                 {
@@ -77,6 +76,7 @@ class DetalleUsuarioFacturaRepository {
                 {
                     model: Servicio,
                     required: false,
+                    paranoid: false,
                 },
                 {
                     model: Factura,
@@ -85,9 +85,6 @@ class DetalleUsuarioFacturaRepository {
             ],
             where: {
                 usuarioid: usuarioId,
-                // estado: {
-                //     [Op.or]: [DetalleUsuarioFactura.PENDIENTE, DetalleUsuarioFactura.PRESTADO ] 
-                // }
                 ...stateWhere
             },
             order: [

@@ -9,6 +9,7 @@ class SuscripcionRepository {
         include: [
           {
             model: Servicio,
+            paranoid: false,
           },
           {
             model: Usuario,

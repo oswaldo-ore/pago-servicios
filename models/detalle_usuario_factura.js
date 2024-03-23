@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
         static NO_GENERADO = 0;
         static GENERADO_AUTOMATICO = 1;
         static associate(models) {
-            DetalleUsuarioFactura.belongsTo(models.Servicio, { foreignKey: 'servicioid' });
+            DetalleUsuarioFactura.belongsTo(models.Servicio, { foreignKey: 'servicioid'});
             DetalleUsuarioFactura.belongsTo(models.Usuario, { foreignKey: 'usuarioid' });
             DetalleUsuarioFactura.belongsTo(models.Factura, { foreignKey: 'facturaid' });
         }
@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
             const formattedDate = moment(this.fecha).format('MMMM-YYYY');
             const capitalizeFormattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
             return capitalizeFormattedDate;
-          }
+        }
     }
 
     DetalleUsuarioFactura.init(

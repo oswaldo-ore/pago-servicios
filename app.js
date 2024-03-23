@@ -49,5 +49,4 @@ app.use(function(err, req, res, next) {
 });
 
 let tareaProgramadas = new TareaProgramada();
-tareaProgramadas.iniciarTareas(); 
 module.exports = app;

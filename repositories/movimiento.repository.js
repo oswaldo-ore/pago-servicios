@@ -69,7 +69,8 @@ class MovimientoRepository {
                             include: [
                                 {
                                     model: Servicio,
-                                    as: 'Servicio'
+                                    as: 'Servicio',
+                                    paranoid: false
                                 }
                             ]
                         }
